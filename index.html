@@ -278,6 +278,59 @@
                 margin-right: auto;
             }
         }
+
+        /* Navigation buttons */
+        .nav-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 8px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(100, 149, 237, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: all;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(100, 149, 237, 0.1);
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:disabled:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #6495ED;
+        }
+
+        .card.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -288,7 +341,22 @@
         </header>
 
         <div class="card-container">
-            <div class="card" id="flipCard" onclick="this.classList.toggle('flipped')">
+            <!-- Navigation buttons -->
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="navigateCard(-1)">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="nav-btn" id="nextBtn" onclick="navigateCard(1)">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Card 1: First Date -->
+            <div class="card" data-card="0" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front">
                     <div class="image-container">
@@ -324,9 +392,38 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Card 2: Girlfriend -->
+            <div class="card hidden" data-card="1" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="back-content">
+                        <span class="event-tag">Official</span>
+                        <p class="story-text">
+                            Ben asked Leah to be his girlfriend.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">A New Chapter</span>
+                        <p class="back-story-text">
+                            And she said <span class="highlight">yes</span>!
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="progress-indicator">
+        <div class="progress-indicator" id="progressIndicator">
             <div class="progress-dot active"></div>
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
@@ -334,5 +431,50 @@
             <div class="progress-dot"></div>
         </div>
     </div>
+
+    <script>
+        let currentCardIndex = 0;
+        const cards = document.querySelectorAll('.card');
+        const totalCards = cards.length;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressDots = document.querySelectorAll('.progress-dot');
+
+        function updateCard() {
+            // Hide all cards and remove flipped state
+            cards.forEach((card, index) => {
+                if (index === currentCardIndex) {
+                    card.classList.remove('hidden');
+                    card.classList.remove('flipped'); // Reset flip state when navigating
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Update navigation buttons
+            prevBtn.disabled = currentCardIndex === 0;
+            nextBtn.disabled = currentCardIndex === totalCards - 1;
+
+            // Update progress indicator
+            progressDots.forEach((dot, index) => {
+                if (index === currentCardIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function navigateCard(direction) {
+            const newIndex = currentCardIndex + direction;
+            if (newIndex >= 0 && newIndex < totalCards) {
+                currentCardIndex = newIndex;
+                updateCard();
+            }
+        }
+
+        // Initialize on page load
+        updateCard();
+    </script>
 </body>
 </html>
