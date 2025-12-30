@@ -71,12 +71,18 @@
             margin: 10px 16px 20px;
             perspective: 1000px;
             min-height: 0;
+            position: relative;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .card {
-            position: relative;
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             transform-style: preserve-3d;
             transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
             cursor: pointer;
@@ -125,7 +131,6 @@
             max-height: 100%;
             object-fit: contain;
             border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(100, 149, 237, 0.15);
         }
 
         .content {
@@ -271,14 +276,6 @@
             }
         }
 
-        @media screen and (min-width: 500px) {
-            .card-container {
-                max-width: 420px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-
         /* Navigation buttons */
         .nav-buttons {
             position: absolute;
@@ -337,7 +334,6 @@
     <div class="wrapped-container">
         <header class="header">
             <h1>Ben and Leah Wrapped</h1>
-            <p class="subtitle">A Love Story</p>
         </header>
 
         <div class="card-container">
@@ -365,7 +361,7 @@
                     <div class="content">
                         <span class="event-tag">First Date</span>
                         <p class="story-text">
-                            Four years later, with a friendly nudge from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at <span class="highlight">Color Me Mine</span>.
+                            <span class="highlight">Five</span> years later, with a friendly nudge from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at <span class="highlight">Color Me Mine</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -475,6 +471,35 @@
 
         // Initialize on page load
         updateCard();
+
+        // Swipe gesture support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const cardContainer = document.querySelector('.card-container');
+
+        cardContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        cardContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // minimum distance for swipe
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swiped left - go to next card
+                    navigateCard(1);
+                } else {
+                    // Swiped right - go to previous card
+                    navigateCard(-1);
+                }
+            }
+        }
     </script>
 </body>
 </html>
