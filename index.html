@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Ben and Leah Wrapped</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #ffffff;
+            color: #333333;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wrapped-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: -webkit-fill-available;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            background: linear-gradient(180deg, #ffffff 0%, #fdf8f7 100%);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 20px 10px;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #6495ED 0%, #FFB6C1 50%, #FFDAB9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .subtitle {
+            font-size: 0.75rem;
+            color: rgba(100, 149, 237, 0.7);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Card flip container */
+        .card-container {
+            flex: 1;
+            display: flex;
+            margin: 10px 16px 20px;
+            perspective: 1000px;
+            min-height: 0;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(100, 149, 237, 0.15);
+            box-shadow: 0 4px 20px rgba(100, 149, 237, 0.1),
+                        0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-front {
+            z-index: 2;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(145deg, #ffffff 0%, #fdf8f7 50%, #fff5f5 100%);
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 20px 10px;
+            min-height: 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(100, 149, 237, 0.15);
+        }
+
+        .content {
+            padding: 20px 24px 28px;
+            flex-shrink: 0;
+        }
+
+        .event-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFB6C1, #FFDAB9);
+            color: #5a4a4a;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+        }
+
+        .story-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #444444;
+            font-weight: 400;
+        }
+
+        .story-text .highlight {
+            color: #6495ED;
+            font-weight: 600;
+        }
+
+        /* Back of card styles */
+        .back-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 28px;
+            text-align: center;
+        }
+
+        .back-event-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #6495ED, #87CEEB);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 24px;
+        }
+
+        .back-story-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #555555;
+            font-weight: 400;
+        }
+
+        .back-story-text .highlight {
+            color: #6495ED;
+            font-weight: 600;
+        }
+
+        .back-story-text .highlight-pink {
+            color: #DB7093;
+            font-weight: 600;
+        }
+
+        .flip-hint {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: rgba(100, 149, 237, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flip-hint svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 20px 24px;
+            flex-shrink: 0;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(100, 149, 237, 0.2);
+        }
+
+        .progress-dot.active {
+            background: linear-gradient(135deg, #FFB6C1, #6495ED);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        @media screen and (max-height: 700px) {
+            .header {
+                padding: 12px 20px 8px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .card-container {
+                margin: 8px 16px 16px;
+            }
+            .image-container {
+                padding: 16px 16px 8px;
+            }
+            .content {
+                padding: 16px 20px 20px;
+            }
+            .story-text,
+            .back-story-text {
+                font-size: 0.95rem;
+            }
+            .back-content {
+                padding: 24px 20px;
+            }
+        }
+
+        @media screen and (min-width: 500px) {
+            .card-container {
+                max-width: 420px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapped-container">
+        <header class="header">
+            <h1>Ben and Leah Wrapped</h1>
+            <p class="subtitle">A Love Story</p>
+        </header>
+
+        <div class="card-container">
+            <div class="card" id="flipCard" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="image-container">
+                        <img src="assets/first-date-bowls.jpeg" alt="Ice cream bowls painted at Color Me Mine on Ben and Leah's first date">
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">First Date</span>
+                        <p class="story-text">
+                            Four years later, with a friendly nudge from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at <span class="highlight">Color Me Mine</span>.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">The Aftermath</span>
+                        <p class="back-story-text">
+                            Ben attempted to return the ice cream bowl to Leah but she <span class="highlight-pink">kindly refused</span> further dates and Ben eventually gave up hope of another date and threw away both bowls <span class="highlight">5 months later</span>.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-indicator">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+    </div>
+</body>
+</html>
