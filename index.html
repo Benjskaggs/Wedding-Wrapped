@@ -8,7 +8,7 @@
     <title>Ben and Leah Wrapped</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -37,7 +37,7 @@
             height: 100vh;
             height: -webkit-fill-available;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            background: linear-gradient(180deg, #ffffff 0%, #fdf8f7 100%);
+            background: #ffffff;
         }
 
         .header {
@@ -100,7 +100,6 @@
             -webkit-backface-visibility: hidden;
             display: flex;
             flex-direction: column;
-            background: #ffffff;
             border-radius: 24px;
             overflow: hidden;
             border: 1px solid rgba(100, 149, 237, 0.15);
@@ -114,7 +113,79 @@
 
         .card-back {
             transform: rotateY(180deg);
-            background: linear-gradient(145deg, #ffffff 0%, #fdf8f7 50%, #fff5f5 100%);
+        }
+
+        /* Cycling card backgrounds - lighter variants of accent colors */
+        .card[data-card="0"] .card-face {
+            background: #EEF4FF; /* Light Blue */
+        }
+        .card[data-card="1"] .card-face {
+            background: #FFF0F5; /* Light Pink */
+        }
+        .card[data-card="2"] .card-face {
+            background: #FFF8F0; /* Light Peach */
+        }
+        .card[data-card="3"] .card-face {
+            background: #F0FFFF; /* Light Cyan */
+        }
+        .card[data-card="4"] .card-face {
+            background: #FFF0F8; /* Light Deep Pink */
+        }
+
+        /* Full-bleed image card style */
+        .card-face.full-image {
+            position: relative;
+        }
+
+        .card-face.full-image .image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0;
+        }
+
+        .card-face.full-image .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .card-face.full-image .card-date,
+        .card-face.full-image .content,
+        .card-face.full-image .flip-hint {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-face.full-image .card-date {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-face.full-image .content {
+            margin-top: auto;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 40px 24px 28px;
+        }
+
+        .card-face.full-image .story-text {
+            color: #ffffff;
+        }
+
+        .card-face.full-image .story-text .highlight {
+            color: #FFB6C1;
+        }
+
+
+        .card-face.full-image .flip-hint {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .card-face.full-image .flip-hint svg {
+            fill: rgba(255, 255, 255, 0.7);
         }
 
         .image-container {
@@ -139,9 +210,9 @@
         }
 
         .card-date {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.6rem;
-            font-weight: 700;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            font-weight: 400;
             text-align: left;
             padding: 16px 24px 8px;
             color: #6495ED;
@@ -152,9 +223,9 @@
             display: inline-block;
             background: linear-gradient(135deg, #FFB6C1, #FFDAB9);
             color: #5a4a4a;
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             font-weight: 700;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -188,9 +259,9 @@
             display: inline-block;
             background: linear-gradient(135deg, #6495ED, #87CEEB);
             color: #ffffff;
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             font-weight: 700;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -475,7 +546,7 @@
             <!-- January 12, 2024: Mini Golf Date -->
             <div class="card hidden" data-card="2" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">January 12, 2024</div>
                     <div class="image-container">
                         <img src="assets/FirstDateMiniGolf.jpg" alt="Ben and Leah at mini golf on January 12th, 2024">
