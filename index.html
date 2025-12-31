@@ -8,7 +8,7 @@
     <title>Ben and Leah Wrapped</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -135,6 +135,16 @@
 
         .content {
             padding: 20px 24px 28px;
+            flex-shrink: 0;
+        }
+
+        .card-date {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: left;
+            padding: 16px 24px 8px;
+            color: #6495ED;
             flex-shrink: 0;
         }
 
@@ -387,10 +397,47 @@
                 </button>
             </div>
 
-            <!-- Card 1: First Date -->
+            <!-- January 2019: First Encounter -->
             <div class="card" data-card="0" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front">
+                    <div class="card-date">January 2019</div>
+                    <div class="back-content">
+                        <span class="event-tag">First Encounter</span>
+                        <p class="story-text">
+                            Ben and his friends heard two girls screaming <span class="highlight">Sue Me</span> by Sabrina Carpenter in their car.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">The Beginning</span>
+                        <p class="back-story-text">
+                            Somehow they ended up in the girls' car, sang and danced together for a bit, and followed each other on <span class="highlight">Instagram</span>.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- May 3, 2023: First Date at Color Me Mine -->
+            <div class="card hidden" data-card="1" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="card-date">May 3, 2023</div>
                     <div class="image-container">
                         <img src="assets/first-date-bowls.jpeg" alt="Ice cream bowls painted at Color Me Mine on Ben and Leah's first date">
                     </div>
@@ -425,24 +472,34 @@
                 </div>
             </div>
 
-            <!-- Card 2: Girlfriend -->
-            <div class="card hidden" data-card="1" onclick="this.classList.toggle('flipped')">
+            <!-- January 12, 2024: Mini Golf Date -->
+            <div class="card hidden" data-card="2" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front">
-                    <div class="back-content">
-                        <span class="event-tag">Official</span>
+                    <div class="card-date">January 12, 2024</div>
+                    <div class="image-container">
+                        <img src="assets/FirstDateMiniGolf.jpg" alt="Ben and Leah at mini golf on January 12th, 2024">
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">First (Consensual) Photo Together</span>
                         <p class="story-text">
-                            Ben asked Leah to be his girlfriend.
+                            After coming to her senses, Leah asked Ben out to mini golf.
                         </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
                     </div>
                 </div>
 
                 <!-- Back of card -->
                 <div class="card-face card-back">
                     <div class="back-content">
-                        <span class="back-event-tag">A New Chapter</span>
+                        <span class="back-event-tag">A Second Chance</span>
                         <p class="back-story-text">
-                            And she said <span class="highlight">yes</span>!
+                            This time, she said <span class="highlight">yes</span> to more dates.
                         </p>
                     </div>
                     <div class="flip-hint">
