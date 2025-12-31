@@ -101,18 +101,19 @@
             display: flex;
             flex-direction: column;
             border-radius: 24px;
-            overflow: hidden;
             border: 1px solid rgba(100, 149, 237, 0.15);
             box-shadow: 0 4px 20px rgba(100, 149, 237, 0.1),
                         0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .card-front {
+            overflow: hidden;
             z-index: 2;
         }
 
         .card-back {
             transform: rotateY(180deg);
+            overflow: hidden;
         }
 
         /* Cycling card backgrounds - lighter variants of accent colors */
@@ -133,10 +134,6 @@
         }
 
         /* Full-bleed image card style */
-        .card-face.full-image {
-            position: relative;
-        }
-
         .card-face.full-image .image-container {
             position: absolute;
             top: 0;
@@ -167,8 +164,21 @@
 
         .card-face.full-image .content {
             margin-top: auto;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            padding: 40px 24px 28px;
+            position: relative;
+            padding: 20px 24px 44px;
+            z-index: 2;
+        }
+
+        .card-face.full-image::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+            z-index: 1;
+            pointer-events: none;
         }
 
         .card-face.full-image .story-text {
@@ -186,6 +196,94 @@
 
         .card-face.full-image .flip-hint svg {
             fill: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Invisible ink effect */
+        .invisible-ink-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 5;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+
+        .invisible-ink-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .invisible-ink-container.revealed {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .invisible-ink-hint {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        /* Message bubble styles */
+        .message-chain {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            flex: 1 1 0;
+            min-height: 0;
+            max-height: 100%;
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message.ben {
+            align-self: flex-end;
+            background: #007AFF;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.leah {
+            align-self: flex-start;
+            background: #E5E5EA;
+            color: #000;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-context {
+            align-self: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 0;
         }
 
         .image-container {
@@ -527,15 +625,11 @@
                 </div>
 
                 <!-- Back of card -->
-                <div class="card-face card-back full-image">
-                    <div class="card-date">September 11, 2022</div>
-                    <div class="image-container">
-                        <img src="assets/FirstPhotoTogether.jpeg" alt="Ben and Leah's first photo together">
-                    </div>
-                    <div class="content">
-                        <span class="event-tag">First Photo Together</span>
-                        <p class="story-text">
-                            Technically this is... but who's keeping count?
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">The Aftermath</span>
+                        <p class="back-story-text">
+                            Ben attempted to return the ice cream bowl to Leah but she <span class="highlight-pink">kindly refused</span> further dates and Ben eventually gave up hope of another date and threw away both bowls <span class="highlight">5 months later</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -547,8 +641,55 @@
                 </div>
             </div>
 
-            <!-- January 12, 2024: Mini Golf Date -->
+            <!-- May 2023: Ghosted -->
             <div class="card hidden" data-card="2" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="card-date">May 2023</div>
+                    <div class="image-container">
+                        <img src="assets/SadGhost.png" alt="Sad ghost representing Ben being ghosted">
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">Ghosted</span>
+                        <p class="story-text">
+                            <span class="highlight">Leah ghosted Ben.</span> At least ghosts are transparent about their intentions...
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="card-date">The Receipts</div>
+                    <p style="font-size: 0.7rem; color: #888; text-align: center; margin: 8px 16px 0; font-style: italic;">actual messages</p>
+                    <div class="message-chain" onclick="event.stopPropagation()" ontouchstart="event.stopPropagation()" ontouchmove="event.stopPropagation()">
+                        <div class="message ben">How about I come after you get home if ur not too busy! I'll bring ice cream!</div>
+                        <div class="message leah">ok today is kinda nuts for me. Another day?</div>
+                        <div class="message-context">ANOTHER DAY...</div>
+                        <div class="message ben">Would 6 work?</div>
+                        <div class="message leah">and my parents actually just got to town and we're all gonna go meet the baby tn</div>
+                        <div class="message leah">so i need to leave my apt at 6😭 so tn isn't gonna work after all i'm so sorry!</div>
+                        <div class="message leah">this week is crazy for me</div>
+                        <div class="message-context">ANOTHER DAY...</div>
+                        <div class="message ben">I know tmrw is Memorial Day and ur "not the biggest pick ball gal" but i say let's play…</div>
+                        <div class="message leah">i'm working at the golf course all day tomorrow😭</div>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- January 12, 2024: Mini Golf Date -->
+            <div class="card hidden" data-card="3" onclick="flipCard2(this)">
                 <!-- Front of card -->
                 <div class="card-face card-front full-image">
                     <div class="card-date">January 12, 2024</div>
@@ -570,11 +711,20 @@
                 </div>
 
                 <!-- Back of card -->
-                <div class="card-face card-back">
-                    <div class="back-content">
-                        <span class="back-event-tag">A Second Chance</span>
-                        <p class="back-story-text">
-                            This time, she said <span class="highlight">yes</span> to more dates.
+                <div class="card-face card-back full-image">
+                    <div class="card-date">September 11, 2022</div>
+                    <div class="image-container">
+                        <img src="assets/FirstPhotoTogether.jpeg" alt="Ben and Leah's first photo together">
+                    </div>
+                    <!-- Invisible ink overlay -->
+                    <div class="invisible-ink-container" id="invisibleInk">
+                        <canvas id="inkCanvas"></canvas>
+                        <div class="invisible-ink-hint">Touch to reveal</div>
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">First Photo Together</span>
+                        <p class="story-text">
+                            Technically this is... but who's keeping count?
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -589,6 +739,7 @@
 
         <div class="progress-indicator" id="progressIndicator">
             <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
@@ -663,6 +814,11 @@
                     progressDots.forEach((dot, index) => {
                         dot.classList.toggle('active', index === currentCardIndex);
                     });
+
+                    // Initialize invisible ink if we're on card 3
+                    if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
+                        initInvisibleInk();
+                    }
                 }, 300);
             }
         }
@@ -697,6 +853,224 @@
                     navigateCard(-1);
                 }
             }
+        }
+
+        // Card 2 flip handler
+        function flipCard2(card) {
+            const wasFlipped = card.classList.contains('flipped');
+            card.classList.toggle('flipped');
+            // If flipping back to front, reset the ink
+            if (wasFlipped) {
+                resetInvisibleInk();
+            }
+        }
+
+        // Invisible ink particle effect
+        let inkInitialized = false;
+        let inkResetFn = null;
+
+        function resetInvisibleInk() {
+            if (inkResetFn) inkResetFn();
+        }
+
+        function initInvisibleInk() {
+            if (inkInitialized) return;
+
+            const inkContainer = document.getElementById('invisibleInk');
+            const inkCanvas = document.getElementById('inkCanvas');
+            if (!inkCanvas || !inkContainer) return;
+
+            const rect = inkContainer.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+
+            inkInitialized = true;
+
+            const ctx = inkCanvas.getContext('2d');
+            let particles = [];
+            let isRevealed = false;
+            let mouseX = -1000, mouseY = -1000;
+            let isInteracting = false;
+            const colors = ['#6495ED', '#FFB6C1', '#FFDAB9', '#87CEEB', '#DB7093'];
+
+            function resizeCanvas() {
+                const rect = inkContainer.getBoundingClientRect();
+                inkCanvas.width = rect.width * window.devicePixelRatio;
+                inkCanvas.height = rect.height * window.devicePixelRatio;
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                initParticles();
+            }
+
+            function initParticles() {
+                particles = [];
+                const rect = inkContainer.getBoundingClientRect();
+                const numParticles = Math.floor((rect.width * rect.height) / 13);
+
+                for (let i = 0; i < numParticles; i++) {
+                    const x = Math.random() * rect.width;
+                    const y = Math.random() * rect.height;
+                    particles.push({
+                        x: x,
+                        y: y,
+                        baseX: x,
+                        baseY: y,
+                        size: Math.random() * 4 + 2,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        opacity: 1,
+                        phase: Math.random() * Math.PI * 2,
+                        removed: false
+                    });
+                }
+            }
+
+            function animate() {
+                if (isRevealed) return;
+
+                const rect = inkContainer.getBoundingClientRect();
+                ctx.clearRect(0, 0, rect.width, rect.height);
+
+                const time = Date.now() * 0.002;
+                let remainingParticles = 0;
+
+                particles.forEach((p, index) => {
+                    if (p.removed) return;
+
+                    // Gentle floating movement
+                    const offsetX = Math.sin(time + p.phase) * 3;
+                    const offsetY = Math.cos(time + p.phase * 0.7) * 3;
+                    const drawX = p.baseX + offsetX;
+                    const drawY = p.baseY + offsetY;
+
+                    // Check if touched (use base position for hit detection)
+                    if (isInteracting) {
+                        const dx = p.baseX - mouseX;
+                        const dy = p.baseY - mouseY;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const radius = 40;
+
+                        if (dist < radius) {
+                            p.removed = true;
+                            return;
+                        }
+                    }
+
+                    remainingParticles++;
+
+                    // Draw particle with floating offset
+                    ctx.beginPath();
+                    ctx.arc(drawX, drawY, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+                });
+
+                ctx.globalAlpha = 1;
+
+                // Check if all particles removed
+                if (remainingParticles === 0) {
+                    isRevealed = true;
+                    inkContainer.classList.add('revealed');
+                    return;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            function getEventPos(e) {
+                const rect = inkContainer.getBoundingClientRect();
+                if (e.touches) {
+                    return {
+                        x: e.touches[0].clientX - rect.left,
+                        y: e.touches[0].clientY - rect.top
+                    };
+                }
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
+            inkContainer.addEventListener('touchstart', (e) => {
+                isInteracting = true;
+                const pos = getEventPos(e);
+                mouseX = pos.x;
+                mouseY = pos.y;
+                e.stopPropagation();
+            }, { passive: true });
+
+            inkContainer.addEventListener('touchmove', (e) => {
+                const pos = getEventPos(e);
+                mouseX = pos.x;
+                mouseY = pos.y;
+                e.stopPropagation();
+            }, { passive: true });
+
+            inkContainer.addEventListener('touchend', () => {
+                isInteracting = false;
+                mouseX = -1000;
+                mouseY = -1000;
+            }, { passive: true });
+
+            inkContainer.addEventListener('mousedown', (e) => {
+                isInteracting = true;
+                const pos = getEventPos(e);
+                mouseX = pos.x;
+                mouseY = pos.y;
+                e.stopPropagation();
+            });
+
+            inkContainer.addEventListener('mousemove', (e) => {
+                if (isInteracting) {
+                    const pos = getEventPos(e);
+                    mouseX = pos.x;
+                    mouseY = pos.y;
+                }
+            });
+
+            inkContainer.addEventListener('mouseup', () => {
+                isInteracting = false;
+                mouseX = -1000;
+                mouseY = -1000;
+            });
+
+            inkContainer.addEventListener('mouseleave', () => {
+                isInteracting = false;
+                mouseX = -1000;
+                mouseY = -1000;
+            });
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // Reset function
+            inkResetFn = function() {
+                isRevealed = false;
+                inkContainer.classList.remove('revealed');
+                initParticles();
+                // Draw immediately
+                particles.forEach((p) => {
+                    ctx.beginPath();
+                    ctx.arc(p.baseX, p.baseY, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+                animate();
+            };
+
+            // Initialize and draw immediately
+            resizeCanvas();
+
+            // Draw particles immediately (no animation delay)
+            particles.forEach((p) => {
+                ctx.beginPath();
+                ctx.arc(p.baseX, p.baseY, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.opacity;
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
+            animate();
         }
     </script>
 </body>
