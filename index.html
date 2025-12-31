@@ -328,6 +328,42 @@
         .card.hidden {
             display: none;
         }
+
+        .card.slide-out-left {
+            animation: slideOutLeft 0.3s ease-out forwards;
+        }
+
+        .card.slide-out-right {
+            animation: slideOutRight 0.3s ease-out forwards;
+        }
+
+        .card.slide-in-left {
+            animation: slideInLeft 0.3s ease-out forwards;
+        }
+
+        .card.slide-in-right {
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+
+        @keyframes slideOutLeft {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-100%); opacity: 0; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -464,8 +500,38 @@
         function navigateCard(direction) {
             const newIndex = currentCardIndex + direction;
             if (newIndex >= 0 && newIndex < totalCards) {
-                currentCardIndex = newIndex;
-                updateCard();
+                const currentCard = cards[currentCardIndex];
+                const nextCard = cards[newIndex];
+
+                // Remove any existing animation classes
+                currentCard.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
+                nextCard.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right', 'hidden');
+
+                // Add animation classes based on direction
+                if (direction > 0) {
+                    // Going forward (swipe left)
+                    currentCard.classList.add('slide-out-left');
+                    nextCard.classList.add('slide-in-left');
+                } else {
+                    // Going backward (swipe right)
+                    currentCard.classList.add('slide-out-right');
+                    nextCard.classList.add('slide-in-right');
+                }
+
+                // After animation, update state
+                setTimeout(() => {
+                    currentCard.classList.add('hidden');
+                    currentCard.classList.remove('slide-out-left', 'slide-out-right', 'flipped');
+                    nextCard.classList.remove('slide-in-left', 'slide-in-right');
+                    currentCardIndex = newIndex;
+
+                    // Update navigation buttons and progress
+                    prevBtn.disabled = currentCardIndex === 0;
+                    nextBtn.disabled = currentCardIndex === totalCards - 1;
+                    progressDots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentCardIndex);
+                    });
+                }, 300);
             }
         }
 
