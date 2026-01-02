@@ -4,38 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="transparent">
     <title>Ben and Leah Wrapped</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --status-bar-color: transparent;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
+        /* SAFE AREA FIX: html background controls Safari status bar color */
+        html {
             height: 100%;
             margin: 0;
             padding: 0;
-            background: #F0F8FF;
             overflow: hidden;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
         }
 
         body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
             color: #333333;
             overscroll-behavior: none;
+            background-color: transparent;
         }
 
+        /* When Gallery is open, the ROOT must turn black */
+        html.gallery-active {
+            background-color: #000000 !important;
+        }
+
+        /* When Summary is open, the ROOT must turn blue */
+        html.summary-active {
+            background-color: #B8D4FF !important;
+        }
+
+        /* SAFE AREA FIX: Container has NO padding - safe-area padding is on children only */
         .wrapped-container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            height: -webkit-fill-available;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            height: 100dvh;
+            padding: 0;
             background: transparent;
             overflow: hidden;
         }
@@ -43,6 +66,9 @@
         .header {
             text-align: center;
             padding: 20px 20px 10px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            padding-left: calc(20px + env(safe-area-inset-left));
+            padding-right: calc(20px + env(safe-area-inset-right));
             flex-shrink: 0;
         }
 
@@ -72,11 +98,13 @@
             flex: 1;
             display: flex;
             margin: 10px auto 20px;
+            margin-left: max(16px, env(safe-area-inset-left));
+            margin-right: max(16px, env(safe-area-inset-right));
             perspective: 1000px;
             min-height: 300px;
             max-height: 700px;
             position: relative;
-            width: calc(100% - 32px);
+            width: calc(100% - 32px - env(safe-area-inset-left) - env(safe-area-inset-right));
             max-width: 500px;
         }
 
@@ -105,8 +133,9 @@
             flex-direction: column;
             border-radius: 24px;
             border: 1px solid rgba(100, 149, 237, 0.15);
-            box-shadow: 0 4px 20px rgba(100, 149, 237, 0.1),
-                        0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 32px rgba(100, 149, 237, 0.15),
+                        0 4px 12px rgba(0, 0, 0, 0.08),
+                        0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .card-front {
@@ -134,6 +163,7 @@
             padding: 0;
             border-radius: 24px;
             overflow: hidden;
+            flex: none;
         }
 
         .card-face.full-image .image-container img {
@@ -155,18 +185,32 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .card[data-card="0"] .card-front .card-date,
+        .card[data-card="0"] .card-front .card-date {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
         .card[data-card="4"] .card-front .card-date,
         .card[data-card="5"] .card-front .card-date {
             color: #000000;
             text-shadow: none;
         }
 
+        .card[data-card="6"] .card-front .card-date {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
         .card-face.full-image .content {
             margin-top: auto;
             position: relative;
-            padding: 20px 24px 44px;
+            padding: 20px 24px 4px;
             z-index: 2;
+            order: 998;
+        }
+
+        .card-face.full-image .card-date {
+            margin-top: 0;
         }
 
         .card-face.full-image::after {
@@ -341,10 +385,12 @@
             font-family: 'Great Vibes', cursive;
             font-size: 1.8rem;
             font-weight: 400;
-            text-align: left;
-            padding: 16px 24px 8px;
+            text-align: center;
+            padding: 8px 24px 16px;
             color: #6495ED;
             flex-shrink: 0;
+            margin-top: auto;
+            order: 999;
         }
 
         .event-tag {
@@ -414,17 +460,7 @@
         }
 
         .flip-hint {
-            position: absolute;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.65rem;
-            color: rgba(100, 149, 237, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            display: none;
         }
 
         .flip-hint svg {
@@ -439,30 +475,132 @@
             50% { opacity: 1; }
         }
 
-        .progress-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            padding: 0 20px 24px;
+        .timeline-container {
+            position: relative;
+            padding: 0 40px 24px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            padding-left: calc(40px + env(safe-area-inset-left));
+            padding-right: calc(40px + env(safe-area-inset-right));
             flex-shrink: 0;
         }
 
-        .progress-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(100, 149, 237, 0.2);
+        .timeline-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(100, 149, 237, 0.15);
+            border-radius: 2px;
+            position: relative;
         }
 
-        .progress-dot.active {
+        .timeline-fill {
+            position: absolute;
+            left: 5%;
+            top: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFB6C1, #6495ED);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            will-change: width;
+        }
+
+        .timeline-milestones {
+            position: absolute;
+            top: -6px;
+            left: 0;
+            width: 100%;
+            height: 16px;
+        }
+
+        .timeline-milestone {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(100, 149, 237, 0.3);
+            border: 2px solid #ffffff;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            cursor: pointer;
+            transition: width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+                        height 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+                        box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+                        background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .timeline-milestone[data-milestone="0"] { left: 5%; }
+        .timeline-milestone[data-milestone="1"] { left: 18%; }
+        .timeline-milestone[data-milestone="2"] { left: 31%; }
+        .timeline-milestone[data-milestone="3"] { left: 44%; }
+        .timeline-milestone[data-milestone="4"] { left: 57%; }
+        .timeline-milestone[data-milestone="5"] { left: 70%; }
+        .timeline-milestone[data-milestone="6"] { left: 83%; }
+        .timeline-milestone[data-milestone="7"] { left: 95%; }
+
+        .timeline-milestone .heart-icon {
+            display: none;
+        }
+
+        .timeline-milestone.passed:not(.active) {
             background: linear-gradient(135deg, #FFB6C1, #6495ED);
-            width: 24px;
-            border-radius: 4px;
+        }
+
+        .timeline-milestone.active {
+            background: transparent !important;
+            border: 0 !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+            outline: none !important;
+            width: 30px;
+            height: 30px;
+            animation: none !important;
+        }
+
+        .timeline-milestone.active .heart-icon {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: #FF1493;
+            filter: drop-shadow(0 0 2px rgba(255, 182, 193, 0.6))
+                    drop-shadow(0 0 4px rgba(255, 182, 193, 0.4))
+                    drop-shadow(0 0 8px rgba(255, 105, 180, 0.3));
+            animation: heart-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heart-pulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 2px rgba(255, 182, 193, 0.6))
+                        drop-shadow(0 0 4px rgba(255, 182, 193, 0.4))
+                        drop-shadow(0 0 8px rgba(255, 105, 180, 0.3));
+            }
+            50% {
+                transform: scale(1.15);
+                filter: drop-shadow(0 0 3px rgba(255, 182, 193, 0.7))
+                        drop-shadow(0 0 6px rgba(255, 182, 193, 0.5))
+                        drop-shadow(0 0 12px rgba(255, 105, 180, 0.4));
+            }
+        }
+
+        @keyframes milestone-glow {
+            0%, 100% {
+                box-shadow:
+                    0 0 0 4px rgba(255, 182, 193, 0.3),
+                    0 0 12px rgba(255, 182, 193, 0.5),
+                    0 0 20px rgba(100, 149, 237, 0.3);
+            }
+            50% {
+                box-shadow:
+                    0 0 0 6px rgba(255, 182, 193, 0.4),
+                    0 0 16px rgba(255, 182, 193, 0.6),
+                    0 0 24px rgba(100, 149, 237, 0.4);
+            }
         }
 
         @media screen and (max-height: 700px) {
             .header {
                 padding: 12px 20px 8px;
+                padding-top: calc(12px + env(safe-area-inset-top));
             }
             .header h1 {
                 font-size: 1.4rem;
@@ -617,12 +755,7 @@
             fill: #000000;
         }
 
-        /* Gallery - body becomes the scroller */
-        body.gallery-open {
-            overflow-y: auto;
-            overscroll-behavior: none;
-        }
-
+        /* Gallery - body NEVER scrolls */
         body.gallery-open .wrapped-container {
             display: none;
         }
@@ -636,15 +769,22 @@
             display: none;
         }
 
-        /* Gallery content - lives in the body flow */
+        /* Gallery content - fixed scroll container */
         .gallery-content {
             display: none;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 1001;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             padding: 60px 16px 40px;
-            background: rgba(0, 0, 0, 0.95);
-            min-height: 100vh;
-            min-height: 100dvh;
+            padding-top: calc(60px + env(safe-area-inset-top));
+            padding-bottom: calc(40px + env(safe-area-inset-bottom));
+            background: #000000;
         }
 
         body.gallery-open .gallery-content {
@@ -767,24 +907,21 @@
             fill: #6495ED;
         }
 
-        /* Wrapped Summary Scrollable View */
-        body.summary-open {
-            overflow-y: auto;
-            overscroll-behavior: none;
-        }
-
+        /* Wrapped Summary - body NEVER scrolls */
         body.summary-open .wrapped-container {
             display: none;
         }
 
         .summary-content {
             display: none;
-            position: relative;
+            position: fixed;
+            inset: 0;
             z-index: 1001;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             padding: calc(60px + env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
             background: #B8D4FF;
-            min-height: 100vh;
-            min-height: 100dvh;
         }
 
         body.summary-open .summary-content {
@@ -895,28 +1032,33 @@
             border-bottom: none;
         }
 
-        /* Full-bleed layer that is NOT fixed - avoids iOS Safari compositing clipping */
+        /* SAFE AREA FIX: Background layer is FIXED to extend into safe areas */
+        /* This is the ONLY element that provides the gradient background */
         #bleed-layer {
-            position: absolute;
-            inset: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 0;
             pointer-events: none;
-            overflow: visible;
+            background: transparent;
         }
 
-        /* Floating hearts background - NOT fixed to avoid compositing */
+        /* Floating hearts background - fixed to extend into safe areas */
         .floating-hearts {
-            position: absolute;
-            top: calc(-100vh - env(safe-area-inset-top));
+            position: fixed;
+            top: 0;
             left: 0;
-            width: 100%;
-            height: calc(300vh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
+            right: 0;
+            bottom: 0;
             pointer-events: none;
             overflow: visible;
         }
 
         .heart {
             position: absolute;
+            top: 0;
             opacity: 0;
             animation: floatUp linear infinite;
         }
@@ -925,10 +1067,10 @@
             fill: currentColor;
         }
 
-        /* KEY: animate top, NOT transform - avoids compositing layer promotion */
+        /* Animate hearts floating up through the viewport */
         @keyframes floatUp {
             0% {
-                top: 200vh;
+                transform: translateY(100vh);
                 opacity: 0;
             }
             5% {
@@ -938,7 +1080,7 @@
                 opacity: 0.3;
             }
             100% {
-                top: -200vh;
+                transform: translateY(-100vh);
                 opacity: 0;
             }
         }
@@ -1231,8 +1373,52 @@
                 </div>
             </div>
 
-            <!-- November 13, 2024: The Proposal -->
+            <!-- August 29, 2024: California Road Trip -->
             <div class="card hidden" data-card="5" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <button class="gallery-btn" onclick="event.stopPropagation(); openCaliforniaGallery();">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                        </svg>
+                    </button>
+                    <div class="card-date">August 29, 2024</div>
+                    <div class="image-container">
+                        <img src="assets/RoadTripWatercolor.png" alt="Ben and Leah on their California road trip">
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">First Road Trip</span>
+                        <p class="story-text">
+                            Ben and Leah embarked on their first <span class="highlight">road trip together</span> to California, visiting hometowns and making memories.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">The Adventure</span>
+                        <p class="back-story-text">
+                            From <span class="highlight">Disneyland</span> to beach bike rides, from <span class="highlight">Bob's Big Boy</span> to swan boat dates at Echo Park, they explored Ben's childhood stomping grounds and created their own California memories together.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- November 13, 2024: The Proposal -->
+            <div class="card hidden" data-card="6" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front full-image">
                     <button class="gallery-btn" onclick="event.stopPropagation(); openGallery();">
@@ -1276,7 +1462,7 @@
             </div>
 
             <!-- Final Card: See Your Wrapped -->
-            <div class="card hidden" data-card="6">
+            <div class="card hidden" data-card="7">
                 <div class="card-face card-front wrapped-summary-card">
                     <div class="wrapped-summary-prompt">
                         <h2 class="wrapped-prompt-title">Your Story So Far</h2>
@@ -1292,15 +1478,51 @@
             </div>
         </div>
 
-        <div class="progress-indicator" id="progressIndicator">
-            <div class="progress-dot active"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
+        <div class="timeline-container">
+            <div class="timeline-track"></div>
+            <div class="timeline-fill" id="timelineFill"></div>
+            <div class="timeline-milestones">
+                <div class="timeline-milestone active passed" data-milestone="0" onclick="jumpToCard(0)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="1" onclick="jumpToCard(1)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="2" onclick="jumpToCard(2)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="3" onclick="jumpToCard(3)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="4" onclick="jumpToCard(4)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="5" onclick="jumpToCard(5)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="6" onclick="jumpToCard(6)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="7" onclick="jumpToCard(7)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1315,7 +1537,7 @@
     </button>
 
     <!-- Gallery - Content (scrolls with body) -->
-    <div class="gallery-content">
+    <div class="gallery-content" id="engagementGallery">
         <h2 class="gallery-title">The Proposal</h2>
         <div class="gallery-grid">
             <div class="gallery-item">
@@ -1326,6 +1548,43 @@
             </div>
             <div class="gallery-item">
                 <img src="assets/EngagementWatercolor.png" alt="Engagement photo 3">
+            </div>
+        </div>
+    </div>
+
+    <!-- California Gallery - Content (scrolls with body) -->
+    <div class="gallery-content" id="californiaGallery" style="display: none;">
+        <h2 class="gallery-title">California Road Trip</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/1. RoadTrip.JPG" alt="Road trip adventure">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/2. SwanLeah.JPG" alt="Leah on swan boat">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/3. SwanDate.jpg" alt="Swan boat date at Echo Park">
+            </div>
+            <div class="gallery-item">
+                <video id="californiaVideo" autoplay muted playsinline style="width: 100%; border-radius: 16px;">
+                    <source src="assets/CaliforniaTrip/4. Skyline Transition V4.mov" type="video/quicktime">
+                    <source src="assets/CaliforniaTrip/4. Skyline Transition V4.mov" type="video/mp4">
+                </video>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/5. SelfieElysianPark.JPG" alt="Selfie at Elysian Park">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/6. Autopia.JPG" alt="Autopia at Disneyland">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/7. Disneyland.JPG" alt="Disneyland">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/8. BeachBikeRide.JPG" alt="Beach bike ride">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/CaliforniaTrip/9. BobsBigBoys.JPG" alt="Bob's Big Boy">
             </div>
         </div>
     </div>
@@ -1391,25 +1650,110 @@
         const DATE_STARTED_DATING = '2024-02-14';
         const DATE_ENGAGED = '2025-11-13';
 
+        // Helper to update theme color (affects iOS Safari status bar)
+        function setThemeColor(color) {
+            console.log('setThemeColor called with:', color); // Debug
+
+            // Method 1: Update theme-color meta tag
+            const themeColorMeta = document.getElementById('themeColor');
+            themeColorMeta.setAttribute('content', color);
+
+            // Method 2: Remove and re-add the meta tag (forces Safari to re-read)
+            const newMeta = themeColorMeta.cloneNode(true);
+            newMeta.setAttribute('content', color);
+            themeColorMeta.parentNode.replaceChild(newMeta, themeColorMeta);
+            newMeta.id = 'themeColor';
+
+            // Method 3: Update CSS variable
+            document.documentElement.style.setProperty('--status-bar-color', color);
+
+            // Method 4: Direct inline style on html (highest specificity)
+            // For transparent, remove inline styles to let CSS take over
+            if (color === 'transparent') {
+                document.documentElement.style.removeProperty('background-color');
+                document.body.style.removeProperty('background-color');
+            } else {
+                document.documentElement.style.backgroundColor = color;
+                document.body.style.backgroundColor = color;
+            }
+
+            // Force repaint
+            void document.documentElement.offsetHeight;
+        }
+
         // Gallery functions
         function openGallery() {
+            document.getElementById('engagementGallery').style.display = 'block';
+            document.getElementById('californiaGallery').style.display = 'none';
+            document.documentElement.classList.add('gallery-active');
             document.body.classList.add('gallery-open');
-            document.documentElement.style.background = '#000';
-            document.body.style.background = '#000';
-            window.scrollTo(0, 0);
+            document.getElementById('bleed-layer').style.display = 'none';
+
+            // Force a theme-color update for the notch
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+        }
+
+        let boomerangInterval = null;
+
+        function openCaliforniaGallery() {
+            document.getElementById('engagementGallery').style.display = 'none';
+            document.getElementById('californiaGallery').style.display = 'block';
+            document.documentElement.classList.add('gallery-active');
+            document.body.classList.add('gallery-open');
+            document.getElementById('bleed-layer').style.display = 'none';
+
+            // Force a theme-color update for the notch
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+
+            // Start boomerang effect for video
+            const video = document.getElementById('californiaVideo');
+            if (video) {
+                let isReversing = false;
+                const fps = 30;
+                const frameTime = 1 / fps;
+
+                video.play();
+
+                // Clear any existing interval
+                if (boomerangInterval) {
+                    clearInterval(boomerangInterval);
+                }
+
+                // Boomerang effect using manual frame stepping
+                video.addEventListener('ended', function() {
+                    isReversing = true;
+                    boomerangInterval = setInterval(() => {
+                        if (isReversing) {
+                            video.currentTime = Math.max(0, video.currentTime - frameTime);
+                            if (video.currentTime <= 0) {
+                                isReversing = false;
+                                clearInterval(boomerangInterval);
+                                video.play();
+                            }
+                        }
+                    }, 1000 / fps);
+                });
+            }
         }
 
         function closeGallery() {
+            // Hide both galleries
+            document.getElementById('engagementGallery').style.display = 'none';
+            document.getElementById('californiaGallery').style.display = 'none';
+
+            document.documentElement.classList.remove('gallery-active');
             document.body.classList.remove('gallery-open');
-            document.documentElement.style.background = '';
-            document.body.style.background = '';
-            window.scrollTo(0, 0);
+            document.getElementById('bleed-layer').style.display = '';
+
+            // Explicitly reset background
+            document.documentElement.style.backgroundColor = 'transparent';
+
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent');
         }
 
         // Ensure gallery and summary are closed on page load (fixes refresh issue)
         document.body.classList.remove('gallery-open');
         document.body.classList.remove('summary-open');
-        document.documentElement.style.background = '';
 
         // Close gallery on escape key
         document.addEventListener('keydown', (e) => {
@@ -1421,11 +1765,12 @@
 
         // Wrapped Summary functions
         function openWrappedSummary() {
+            document.documentElement.classList.add('summary-active');
             document.body.classList.add('summary-open');
-            // Solid color matching top of gradient for safe areas
-            document.documentElement.style.background = '#B8D4FF';
-            document.body.style.background = '#B8D4FF';
-            window.scrollTo(0, 0);
+            document.getElementById('bleed-layer').style.display = 'none';
+
+            // Force a theme-color update
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#B8D4FF');
 
             // Animate stat cards on scroll
             const statCards = document.querySelectorAll('.stat-card');
@@ -1459,10 +1804,14 @@
         }
 
         function closeWrappedSummary() {
+            document.documentElement.classList.remove('summary-active');
             document.body.classList.remove('summary-open');
-            document.documentElement.style.background = '';
-            document.body.style.background = '';
-            window.scrollTo(0, 0);
+            document.getElementById('bleed-layer').style.display = '';
+
+            // Explicitly reset background
+            document.documentElement.style.backgroundColor = 'transparent';
+
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent');
         }
 
         let currentCardIndex = 0;
@@ -1470,7 +1819,21 @@
         const totalCards = cards.length;
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const progressDots = document.querySelectorAll('.progress-dot');
+        const timelineMilestones = document.querySelectorAll('.timeline-milestone');
+        const timelineFill = document.getElementById('timelineFill');
+
+        function updateTimelineProgress(progress, useTransition = false) {
+            // Timeline spans from 5% to 95% (90% total range)
+            const fillWidth = Math.max(0, Math.min(90, progress * 90));
+
+            if (useTransition) {
+                timelineFill.style.transition = 'width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1)';
+            } else {
+                timelineFill.style.transition = 'none';
+            }
+
+            timelineFill.style.width = fillWidth + '%';
+        }
 
         function updateCard() {
             // Hide all cards and remove flipped state
@@ -1487,14 +1850,45 @@
             prevBtn.disabled = currentCardIndex === 0;
             nextBtn.disabled = currentCardIndex === totalCards - 1;
 
-            // Update progress indicator
-            progressDots.forEach((dot, index) => {
+            // Update timeline milestones
+            timelineMilestones.forEach((milestone, index) => {
                 if (index === currentCardIndex) {
-                    dot.classList.add('active');
+                    milestone.classList.add('active');
+                    milestone.classList.add('passed');
+                } else if (index < currentCardIndex) {
+                    milestone.classList.remove('active');
+                    milestone.classList.add('passed');
                 } else {
-                    dot.classList.remove('active');
+                    milestone.classList.remove('active', 'passed');
                 }
             });
+
+            // Update timeline fill
+            const progress = currentCardIndex / (totalCards - 1);
+            updateTimelineProgress(progress, true);
+        }
+
+        function jumpToCard(targetIndex) {
+            if (targetIndex === currentCardIndex || targetIndex < 0 || targetIndex >= totalCards) {
+                return; // Already on this card or invalid index
+            }
+
+            // Pause video if leaving card 0
+            if (currentCardIndex === 0 && parkingLotVideo) {
+                parkingLotVideo.pause();
+                parkingLotVideo.currentTime = 0;
+            }
+
+            // Update current card index
+            currentCardIndex = targetIndex;
+
+            // Update card visibility and timeline
+            updateCard();
+
+            // Initialize invisible ink if jumping to card 3
+            if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
+                initInvisibleInk();
+            }
         }
 
         function navigateCard(direction) {
@@ -1531,12 +1925,26 @@
                     nextCard.classList.remove('slide-in-left', 'slide-in-right');
                     currentCardIndex = newIndex;
 
-                    // Update navigation buttons and progress
+                    // Update navigation buttons
                     prevBtn.disabled = currentCardIndex === 0;
                     nextBtn.disabled = currentCardIndex === totalCards - 1;
-                    progressDots.forEach((dot, index) => {
-                        dot.classList.toggle('active', index === currentCardIndex);
+
+                    // Update timeline milestones
+                    timelineMilestones.forEach((milestone, index) => {
+                        if (index === currentCardIndex) {
+                            milestone.classList.add('active');
+                            milestone.classList.add('passed');
+                        } else if (index < currentCardIndex) {
+                            milestone.classList.remove('active');
+                            milestone.classList.add('passed');
+                        } else {
+                            milestone.classList.remove('active', 'passed');
+                        }
                     });
+
+                    // Update timeline fill
+                    const progress = currentCardIndex / (totalCards - 1);
+                    updateTimelineProgress(progress, true);
 
                     // Initialize invisible ink if we're on card 3
                     if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
@@ -1581,6 +1989,13 @@
             const diff = touchStartX - touchCurrentX;
             const containerWidth = cardContainer.offsetWidth;
             const progress = Math.min(Math.max(diff / containerWidth, -1), 1);
+
+            // Update timeline fill in real-time during drag
+            const dragProgress = diff / containerWidth;
+            const continuousProgress = Math.max(0, Math.min(1,
+                (currentCardIndex + dragProgress) / (totalCards - 1)
+            ));
+            updateTimelineProgress(continuousProgress, false);
 
             const currentCard = cards[currentCardIndex];
             const nextIndex = currentCardIndex + (diff > 0 ? 1 : -1);
@@ -1660,9 +2075,23 @@
 
                     prevBtn.disabled = currentCardIndex === 0;
                     nextBtn.disabled = currentCardIndex === totalCards - 1;
-                    progressDots.forEach((dot, index) => {
-                        dot.classList.toggle('active', index === currentCardIndex);
+
+                    // Update timeline milestones
+                    timelineMilestones.forEach((milestone, index) => {
+                        if (index === currentCardIndex) {
+                            milestone.classList.add('active');
+                            milestone.classList.add('passed');
+                        } else if (index < currentCardIndex) {
+                            milestone.classList.remove('active');
+                            milestone.classList.add('passed');
+                        } else {
+                            milestone.classList.remove('active', 'passed');
+                        }
                     });
+
+                    // Update timeline fill with transition
+                    const finalProgress = currentCardIndex / (totalCards - 1);
+                    updateTimelineProgress(finalProgress, true);
 
                     if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
                         initInvisibleInk();
@@ -1672,6 +2101,10 @@
                 // Snap back
                 currentCard.style.transform = 'translateX(0) scale(1)';
                 currentCard.style.opacity = '1';
+
+                // Snap timeline back to current position
+                const currentProgress = currentCardIndex / (totalCards - 1);
+                updateTimelineProgress(currentProgress, true);
 
                 if (nextCard) {
                     nextCard.style.transform = `translateX(${diff > 0 ? 30 : -30}%) scale(0.85)`;
@@ -1990,7 +2423,7 @@
             const colors = ['#FFB6C1', '#6495ED', '#FFDAB9', '#87CEEB', '#DB7093', '#FFD700', '#FF69B4'];
             const shapes = ['circle', 'square', 'triangle'];
 
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 400; i++) {
                 setTimeout(() => {
                     const confetti = document.createElement('div');
                     confetti.className = 'confetti';
@@ -1999,7 +2432,7 @@
                     const color = colors[Math.floor(Math.random() * colors.length)];
                     const left = Math.random() * 100;
                     const size = Math.random() * 8 + 6;
-                    const delay = Math.random() * 0.5;
+                    const delay = Math.random() * 0.25;
                     const duration = Math.random() * 2 + 2;
 
                     let shapeStyle = '';
@@ -2029,14 +2462,14 @@
 
                     // Cleanup after animation
                     setTimeout(() => confetti.remove(), (duration + delay + 1) * 1000);
-                }, i * 20);
+                }, i * 10);
             }
             // Note: confettiTriggered stays true - confetti only plays once per session
         }
 
-        // Watch for engagement card (card 5) becoming visible
+        // Watch for engagement card (card 6) becoming visible
         const engagementCardObserver = new MutationObserver((mutations) => {
-            const engagementCard = document.querySelector('.card[data-card="5"]');
+            const engagementCard = document.querySelector('.card[data-card="6"]');
             if (engagementCard && !engagementCard.classList.contains('hidden')) {
                 triggerConfetti();
             }
