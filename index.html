@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Ben and Leah Wrapped</title>
@@ -18,17 +18,16 @@
 
         html, body {
             height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #F0F8FF;
             overflow: hidden;
         }
 
         body {
             font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #ffffff;
             color: #333333;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            display: flex;
-            flex-direction: column;
+            overscroll-behavior: none;
         }
 
         .wrapped-container {
@@ -37,7 +36,8 @@
             height: 100vh;
             height: -webkit-fill-available;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            background: #ffffff;
+            background: transparent;
+            overflow: hidden;
         }
 
         .header {
@@ -47,13 +47,16 @@
         }
 
         .header h1 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #6495ED 0%, #FFB6C1 50%, #FFDAB9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            color: #ffffff;
+            text-shadow:
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
         }
 
         .header .subtitle {
@@ -113,24 +116,12 @@
 
         .card-back {
             transform: rotateY(180deg);
-            overflow: hidden;
+            overflow: visible;
         }
 
-        /* Cycling card backgrounds - lighter variants of accent colors */
-        .card[data-card="0"] .card-face {
-            background: #EEF4FF; /* Light Blue */
-        }
-        .card[data-card="1"] .card-face {
-            background: #FFF0F5; /* Light Pink */
-        }
-        .card[data-card="2"] .card-face {
-            background: #FFF8F0; /* Light Peach */
-        }
-        .card[data-card="3"] .card-face {
-            background: #F0FFFF; /* Light Cyan */
-        }
-        .card[data-card="4"] .card-face {
-            background: #FFF0F8; /* Light Deep Pink */
+        /* Card backgrounds */
+        .card-face {
+            background: #ffffff;
         }
 
         /* Full-bleed image card style */
@@ -141,13 +132,15 @@
             right: 0;
             bottom: 0;
             padding: 0;
+            border-radius: 24px;
+            overflow: hidden;
         }
 
         .card-face.full-image .image-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 0;
+            border-radius: 24px;
         }
 
         .card-face.full-image .card-date,
@@ -160,6 +153,13 @@
         .card-face.full-image .card-date {
             color: #ffffff;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card[data-card="0"] .card-front .card-date,
+        .card[data-card="4"] .card-front .card-date,
+        .card[data-card="5"] .card-front .card-date {
+            color: #000000;
+            text-shadow: none;
         }
 
         .card-face.full-image .content {
@@ -179,10 +179,28 @@
             background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
             z-index: 1;
             pointer-events: none;
+            border-radius: 0 0 24px 24px;
         }
 
         .card-face.full-image .story-text {
             color: #ffffff;
+        }
+
+        /* Video container for full-bleed video */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .card-face.full-image .story-text .highlight {
@@ -218,25 +236,37 @@
             height: 100%;
         }
 
-        .invisible-ink-container.revealed {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-
         .invisible-ink-hint {
             position: absolute;
-            bottom: 80px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            z-index: 10;
+            z-index: 20;
             pointer-events: none;
-            opacity: 0.9;
+            line-height: 1.3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            background: #6495ED;
+            padding: 24px 32px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.2s ease;
+        }
+
+        .invisible-ink-hint.hidden {
+            opacity: 0;
+        }
+
+        .invisible-ink-hint svg {
+            width: 48px;
+            height: 48px;
+            fill: #ffffff;
         }
 
         /* Message bubble styles */
@@ -455,17 +485,23 @@
             }
         }
 
-        /* Navigation buttons */
+        /* Navigation buttons - hidden on mobile */
         .nav-buttons {
             position: absolute;
             top: 50%;
             width: 100%;
-            display: flex;
+            display: none;
             justify-content: space-between;
             padding: 0 8px;
             transform: translateY(-50%);
             pointer-events: none;
             z-index: 10;
+        }
+
+        @media screen and (min-width: 768px) {
+            .nav-buttons {
+                display: flex;
+            }
         }
 
         .nav-btn {
@@ -525,28 +561,434 @@
         }
 
         @keyframes slideOutLeft {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-100%); opacity: 0; }
+            from { transform: translateX(0) scale(1); opacity: 1; }
+            to { transform: translateX(-30%) scale(0.85); opacity: 0; }
         }
 
         @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+            from { transform: translateX(0) scale(1); opacity: 1; }
+            to { transform: translateX(30%) scale(0.85); opacity: 0; }
         }
 
         @keyframes slideInLeft {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateX(30%) scale(0.85); opacity: 0; }
+            to { transform: translateX(0) scale(1); opacity: 1; }
         }
 
         @keyframes slideInRight {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateX(-30%) scale(0.85); opacity: 0; }
+            to { transform: translateX(0) scale(1); opacity: 1; }
+        }
+
+        .header {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Gallery button */
+        .gallery-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .gallery-btn:hover {
+            transform: scale(1.1);
+            background: #ffffff;
+        }
+
+        .gallery-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #000000;
+        }
+
+        /* Gallery - body becomes the scroller */
+        body.gallery-open {
+            overflow-y: auto;
+            overscroll-behavior: none;
+        }
+
+        body.gallery-open .wrapped-container {
+            display: none;
+        }
+
+        body.gallery-open .gallery-overlay {
+            display: block;
+        }
+
+        /* Gallery popup - no overlay needed, body background handles it */
+        .gallery-overlay {
+            display: none;
+        }
+
+        /* Gallery content - lives in the body flow */
+        .gallery-content {
+            display: none;
+            position: relative;
+            z-index: 1001;
+            padding: 60px 16px 40px;
+            background: rgba(0, 0, 0, 0.95);
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        body.gallery-open .gallery-content {
+            display: block;
+        }
+
+        .gallery-close {
+            position: fixed;
+            top: calc(16px + env(safe-area-inset-top));
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1002;
+            transition: background 0.2s ease;
+        }
+
+        body.gallery-open .gallery-close {
+            display: flex;
+        }
+
+        .gallery-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .gallery-close svg {
+            width: 28px;
+            height: 28px;
+            fill: #ffffff;
+        }
+
+        .gallery-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .gallery-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Wrapped Summary Card Styles */
+        .wrapped-summary-card {
+            background: linear-gradient(135deg, #6495ED 0%, #DB7093 50%, #FFB6C1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wrapped-summary-prompt {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .wrapped-prompt-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .wrapped-prompt-text {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .wrapped-summary-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            color: #6495ED;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .wrapped-summary-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .wrapped-summary-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #6495ED;
+        }
+
+        /* Wrapped Summary Scrollable View */
+        body.summary-open {
+            overflow-y: auto;
+            overscroll-behavior: none;
+        }
+
+        body.summary-open .wrapped-container {
+            display: none;
+        }
+
+        .summary-content {
+            display: none;
+            position: relative;
+            z-index: 1001;
+            padding: calc(60px + env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
+            background: #B8D4FF;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        body.summary-open .summary-content {
+            display: block;
+        }
+
+        .summary-close {
+            position: fixed;
+            top: calc(16px + env(safe-area-inset-top));
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1002;
+            transition: background 0.2s ease;
+        }
+
+        body.summary-open .summary-close {
+            display: flex;
+        }
+
+        .summary-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .summary-close svg {
+            width: 28px;
+            height: 28px;
+            fill: #ffffff;
+        }
+
+        .summary-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .summary-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 0.4s ease-out, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .stat-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #6495ED;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #555;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-subtitle {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .stat-list {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .stat-list div {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(100, 149, 237, 0.1);
+        }
+
+        .stat-list div:last-child {
+            border-bottom: none;
+        }
+
+        /* Full-bleed layer that is NOT fixed - avoids iOS Safari compositing clipping */
+        #bleed-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        /* Floating hearts background - NOT fixed to avoid compositing */
+        .floating-hearts {
+            position: absolute;
+            top: calc(-100vh - env(safe-area-inset-top));
+            left: 0;
+            width: 100%;
+            height: calc(300vh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .heart {
+            position: absolute;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        .heart svg {
+            fill: currentColor;
+        }
+
+        /* KEY: animate top, NOT transform - avoids compositing layer promotion */
+        @keyframes floatUp {
+            0% {
+                top: 200vh;
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.3;
+            }
+            95% {
+                opacity: 0.3;
+            }
+            100% {
+                top: -200vh;
+                opacity: 0;
+            }
+        }
+
+        /* Confetti styles */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+
+        .confetti.animate {
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="wrapped-container">
+    <!-- Full-bleed layer (NOT fixed) to avoid iOS Safari compositing clipping -->
+    <div id="bleed-layer">
+        <!-- Floating hearts background -->
+        <div class="floating-hearts" id="floatingHearts"></div>
+    </div>
+
+    <!-- Confetti container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <div class="wrapped-container" id="wrappedContainer">
         <header class="header">
             <h1>Ben and Leah Wrapped</h1>
         </header>
@@ -567,11 +1009,14 @@
             </div>
 
             <!-- January 2019: First Encounter -->
-            <div class="card" data-card="0" onclick="this.classList.toggle('flipped')">
+            <div class="card" data-card="0" onclick="flipCard0(this)">
                 <!-- Front of card -->
-                <div class="card-face card-front">
-                    <div class="card-date">January 2019</div>
-                    <div class="back-content">
+                <div class="card-face card-front full-image">
+                    <div class="card-date">January 27th, 2019</div>
+                    <div class="image-container">
+                        <img src="assets/ParkingLotEncounter.png" alt="Parking lot where Ben and Leah first met">
+                    </div>
+                    <div class="content">
                         <span class="event-tag">First Encounter</span>
                         <p class="story-text">
                             Ben and his friends heard two girls screaming <span class="highlight">Sue Me</span> by Sabrina Carpenter in their car.
@@ -586,11 +1031,17 @@
                 </div>
 
                 <!-- Back of card -->
-                <div class="card-face card-back">
-                    <div class="back-content">
-                        <span class="back-event-tag">The Beginning</span>
-                        <p class="back-story-text">
-                            Somehow they ended up in the girls' car, sang and danced together for a bit, and followed each other on <span class="highlight">Instagram</span>.
+                <div class="card-face card-back full-image">
+                    <div class="video-container">
+                        <video id="parkingLotVideo" playsinline loop>
+                            <source src="assets/ParkingLotEncounter.mov" type="video/quicktime">
+                            <source src="assets/ParkingLotEncounter.mov" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">The Beginning</span>
+                        <p class="story-text">
+                            Somehow they ended up in the girls' car, sang and danced together for a bit, and followed each other on <span class="highlight-pink">Instagram</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -613,7 +1064,7 @@
                     <div class="content">
                         <span class="event-tag">First Date</span>
                         <p class="story-text">
-                            <span class="highlight">Five</span> years later, with a friendly nudge from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at <span class="highlight">Color Me Mine</span>.
+                            <span class="highlight">4</span> years later, with a friendly nudge from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at <span class="highlight">Color Me Mine</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -667,7 +1118,7 @@
                 <div class="card-face card-back">
                     <div class="card-date">The Receipts</div>
                     <p style="font-size: 0.7rem; color: #888; text-align: center; margin: 8px 16px 0; font-style: italic;">actual messages</p>
-                    <div class="message-chain" onclick="event.stopPropagation()" ontouchstart="event.stopPropagation()" ontouchmove="event.stopPropagation()">
+                    <div class="message-chain" onclick="event.stopPropagation()">
                         <div class="message ben">How about I come after you get home if ur not too busy! I'll bring ice cream!</div>
                         <div class="message leah">ok today is kinda nuts for me. Another day?</div>
                         <div class="message-context">ANOTHER DAY...</div>
@@ -714,12 +1165,17 @@
                 <div class="card-face card-back full-image">
                     <div class="card-date">September 11, 2022</div>
                     <div class="image-container">
-                        <img src="assets/FirstPhotoTogether.jpeg" alt="Ben and Leah's first photo together">
+                        <img src="assets/FirstPhotoTogether.jpg" alt="Ben and Leah's first photo together">
                     </div>
                     <!-- Invisible ink overlay -->
                     <div class="invisible-ink-container" id="invisibleInk">
                         <canvas id="inkCanvas"></canvas>
-                        <div class="invisible-ink-hint">Touch to reveal</div>
+                        <div class="invisible-ink-hint">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.5 9.5c-.28 0-.55.04-.81.1L16 8.71V5.5c0-.83-.67-1.5-1.5-1.5S13 4.67 13 5.5v8.17l-2.09-2.09c-.56-.56-1.46-.56-2.02 0-.26.26-.39.6-.39.94 0 .35.14.68.39.94l5.68 5.68c.39.39.9.59 1.41.59h4.17c1.38 0 2.5-1.12 2.5-2.5v-5.23c0-.83-.67-1.5-1.5-1.5h-.15zM4 13h2V5H4v8zm-2 2h2V3H2v12z"/>
+                            </svg>
+                            <span>Swipe To<br>Reveal</span>
+                        </div>
                     </div>
                     <div class="content">
                         <span class="event-tag">First Photo Together</span>
@@ -735,6 +1191,105 @@
                     </div>
                 </div>
             </div>
+
+            <!-- February 14, 2024: Valentine's Day -->
+            <div class="card hidden" data-card="4" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="card-date">February 14, 2024</div>
+                    <div class="image-container">
+                        <img src="assets/GirlfriendWatercolor.png" alt="Valentine's Day">
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">Valentine's Day</span>
+                        <p class="story-text">
+                            Their first <span class="highlight">Valentine's Day</span> together.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">Official</span>
+                        <p class="back-story-text">
+                            Ben asked Leah to be his <span class="highlight-pink">girlfriend</span>.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- November 13, 2024: The Proposal -->
+            <div class="card hidden" data-card="5" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front full-image">
+                    <button class="gallery-btn" onclick="event.stopPropagation(); openGallery();">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                        </svg>
+                    </button>
+                    <div class="card-date">November 13, 2025</div>
+                    <div class="image-container">
+                        <img src="assets/EngagementWatercolor.png" alt="Ben and Leah's engagement">
+                    </div>
+                    <div class="content">
+                        <span class="event-tag">She Said Yes!</span>
+                        <p class="story-text">
+                            After <span class="highlight">nearly 2 years</span> of dating, Ben popped the question in a park up Provo Canyon.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">The Secret Mission</span>
+                        <p class="back-story-text">
+                            Ben had a ring and a problem: take Leah anywhere pretty and she'd <span class="highlight-pink">totally know</span>. So he enlisted her work, <span class="highlight">Cords Club</span>, to stage a "fall photoshoot" for an earring collection. While Leah wandered through the park scouting the perfect shot... Ben appeared out of nowhere. She had <span class="highlight-pink">absolutely no clue</span>. Mission accomplished.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Card: See Your Wrapped -->
+            <div class="card hidden" data-card="6">
+                <div class="card-face card-front wrapped-summary-card">
+                    <div class="wrapped-summary-prompt">
+                        <h2 class="wrapped-prompt-title">Your Story So Far</h2>
+                        <p class="wrapped-prompt-text">From a parking lot singalong to forever.</p>
+                        <button class="wrapped-summary-btn" onclick="event.stopPropagation(); openWrappedSummary();">
+                            <span>See Your Wrapped</span>
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="progress-indicator" id="progressIndicator">
@@ -744,10 +1299,172 @@
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+    </div>
+
+    <!-- Gallery - Fixed background overlay -->
+    <div class="gallery-overlay" id="galleryOverlay"></div>
+
+    <!-- Gallery - Close button (fixed) -->
+    <button class="gallery-close" onclick="closeGallery()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </button>
+
+    <!-- Gallery - Content (scrolls with body) -->
+    <div class="gallery-content">
+        <h2 class="gallery-title">The Proposal</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="assets/EngagementWatercolor.png" alt="Engagement photo">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/EngagementWatercolor.png" alt="Engagement photo 2">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/EngagementWatercolor.png" alt="Engagement photo 3">
+            </div>
+        </div>
+    </div>
+
+    <!-- Wrapped Summary - Close button (fixed) -->
+    <button class="summary-close" onclick="closeWrappedSummary()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </button>
+
+    <!-- Wrapped Summary - Content (scrolls with body) -->
+    <div class="summary-content">
+        <h2 class="summary-title">Ben & Leah Wrapped</h2>
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="statDaysKnown">---</div>
+                <div class="stat-label">Days Known</div>
+                <div class="stat-subtitle">Since January 27, 2019</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statDaysDated">---</div>
+                <div class="stat-label">Days Dated</div>
+                <div class="stat-subtitle">Since February 14, 2024</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statDaysEngaged">---</div>
+                <div class="stat-label">Days Engaged</div>
+                <div class="stat-subtitle">Since November 13, 2025</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">States Visited</div>
+                <div class="stat-list">
+                    <div>Minnesota</div>
+                    <div>California</div>
+                    <div>Texas</div>
+                    <div>Florida</div>
+                    <div>Utah</div>
+                    <div>Arizona</div>
+                    <div>Alabama</div>
+                    <div>Colorado</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Concerts Attended</div>
+                <div class="stat-list">
+                    <div>Jeremy Zucker & Chelsea Cutler</div>
+                    <div>Tate McRae</div>
+                    <div>Post Malone</div>
+                    <div>Dan + Shay</div>
+                    <div>Sundance Bluebird Cafe</div>
+                    <div>Jonas Brothers</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Key dates - edit these to update stats
+        const DATE_FIRST_MET = '2019-01-27';
+        const DATE_STARTED_DATING = '2024-02-14';
+        const DATE_ENGAGED = '2025-11-13';
+
+        // Gallery functions
+        function openGallery() {
+            document.body.classList.add('gallery-open');
+            document.documentElement.style.background = '#000';
+            document.body.style.background = '#000';
+            window.scrollTo(0, 0);
+        }
+
+        function closeGallery() {
+            document.body.classList.remove('gallery-open');
+            document.documentElement.style.background = '';
+            document.body.style.background = '';
+            window.scrollTo(0, 0);
+        }
+
+        // Ensure gallery and summary are closed on page load (fixes refresh issue)
+        document.body.classList.remove('gallery-open');
+        document.body.classList.remove('summary-open');
+        document.documentElement.style.background = '';
+
+        // Close gallery on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeGallery();
+                closeWrappedSummary();
+            }
+        });
+
+        // Wrapped Summary functions
+        function openWrappedSummary() {
+            document.body.classList.add('summary-open');
+            // Solid color matching top of gradient for safe areas
+            document.documentElement.style.background = '#B8D4FF';
+            document.body.style.background = '#B8D4FF';
+            window.scrollTo(0, 0);
+
+            // Animate stat cards on scroll
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => card.classList.remove('visible'));
+
+            setTimeout(() => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.classList.add('visible');
+                            }, index * 100);
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                statCards.forEach(card => observer.observe(card));
+            }, 100);
+
+            // Calculate all date-based stats
+            const today = new Date();
+
+            const daysKnown = Math.floor((today - new Date(DATE_FIRST_MET)) / (1000 * 60 * 60 * 24));
+            document.getElementById('statDaysKnown').textContent = daysKnown.toLocaleString();
+
+            const daysDated = Math.floor((today - new Date(DATE_STARTED_DATING)) / (1000 * 60 * 60 * 24));
+            document.getElementById('statDaysDated').textContent = daysDated.toLocaleString();
+
+            const daysEngaged = Math.floor((today - new Date(DATE_ENGAGED)) / (1000 * 60 * 60 * 24));
+            document.getElementById('statDaysEngaged').textContent = daysEngaged.toLocaleString();
+        }
+
+        function closeWrappedSummary() {
+            document.body.classList.remove('summary-open');
+            document.documentElement.style.background = '';
+            document.body.style.background = '';
+            window.scrollTo(0, 0);
+        }
+
         let currentCardIndex = 0;
         const cards = document.querySelectorAll('.card');
         const totalCards = cards.length;
@@ -785,6 +1502,12 @@
             if (newIndex >= 0 && newIndex < totalCards) {
                 const currentCard = cards[currentCardIndex];
                 const nextCard = cards[newIndex];
+
+                // Pause video if leaving card 0
+                if (currentCardIndex === 0 && parkingLotVideo) {
+                    parkingLotVideo.pause();
+                    parkingLotVideo.currentTime = 0;
+                }
 
                 // Remove any existing animation classes
                 currentCard.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
@@ -826,36 +1549,189 @@
         // Initialize on page load
         updateCard();
 
-        // Swipe gesture support
+        // Swipe gesture support with partial drag
         let touchStartX = 0;
-        let touchEndX = 0;
+        let touchCurrentX = 0;
+        let isDragging = false;
+        let touchStartedInScrollable = false;
+        let touchStartedInInk = false;
         const cardContainer = document.querySelector('.card-container');
+        const swipeThreshold = 80; // minimum distance to complete swipe
 
         cardContainer.addEventListener('touchstart', (e) => {
+            // Check if touch started in a scrollable element or invisible ink
+            touchStartedInScrollable = e.target.closest('.message-chain') !== null;
+            touchStartedInInk = e.target.closest('.invisible-ink-container') !== null;
+
+            if (touchStartedInScrollable || touchStartedInInk) return;
+
             touchStartX = e.changedTouches[0].screenX;
+            touchCurrentX = touchStartX;
+            isDragging = true;
+
+            // Disable transition during drag
+            const currentCard = cards[currentCardIndex];
+            currentCard.style.transition = 'none';
+        }, { passive: true });
+
+        cardContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging || touchStartedInScrollable || touchStartedInInk) return;
+
+            touchCurrentX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchCurrentX;
+            const containerWidth = cardContainer.offsetWidth;
+            const progress = Math.min(Math.max(diff / containerWidth, -1), 1);
+
+            const currentCard = cards[currentCardIndex];
+            const nextIndex = currentCardIndex + (diff > 0 ? 1 : -1);
+            const nextCard = cards[nextIndex];
+
+            // Apply transform to current card
+            const currentScale = 1 - Math.abs(progress) * 0.15;
+            const currentTranslate = -progress * 30;
+            const currentOpacity = 1 - Math.abs(progress) * 0.5;
+            currentCard.style.transform = `translateX(${currentTranslate}%) scale(${currentScale})`;
+            currentCard.style.opacity = currentOpacity;
+
+            // Show and transform next card if it exists
+            if (nextCard && nextIndex >= 0 && nextIndex < totalCards) {
+                nextCard.classList.remove('hidden');
+                nextCard.style.transition = 'none';
+
+                const nextProgress = 1 - Math.abs(progress);
+                const nextScale = 0.85 + Math.abs(progress) * 0.15;
+                const nextTranslate = (diff > 0 ? 1 : -1) * 30 * nextProgress;
+                const nextOpacity = Math.abs(progress);
+
+                nextCard.style.transform = `translateX(${nextTranslate}%) scale(${nextScale})`;
+                nextCard.style.opacity = nextOpacity;
+            }
         }, { passive: true });
 
         cardContainer.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
+            if (!isDragging || touchStartedInScrollable || touchStartedInInk) {
+                touchStartedInScrollable = false;
+                touchStartedInInk = false;
+                return;
+            }
+
+            isDragging = false;
+            const diff = touchStartX - touchCurrentX;
+            const currentCard = cards[currentCardIndex];
+            const nextIndex = currentCardIndex + (diff > 0 ? 1 : -1);
+            const nextCard = cards[nextIndex];
+
+            // Re-enable transitions
+            currentCard.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+            if (nextCard) {
+                nextCard.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+            }
+
+            if (Math.abs(diff) > swipeThreshold && nextIndex >= 0 && nextIndex < totalCards) {
+                // Complete the swipe
+                currentCard.style.transform = `translateX(${diff > 0 ? -30 : 30}%) scale(0.85)`;
+                currentCard.style.opacity = '0';
+
+                if (nextCard) {
+                    nextCard.style.transform = 'translateX(0) scale(1)';
+                    nextCard.style.opacity = '1';
+                }
+
+                // Pause video if leaving card 0
+                if (currentCardIndex === 0 && parkingLotVideo) {
+                    parkingLotVideo.pause();
+                    parkingLotVideo.currentTime = 0;
+                }
+
+                setTimeout(() => {
+                    currentCard.classList.add('hidden');
+                    currentCard.classList.remove('flipped');
+                    currentCard.style.transform = '';
+                    currentCard.style.opacity = '';
+                    currentCard.style.transition = '';
+
+                    if (nextCard) {
+                        nextCard.style.transform = '';
+                        nextCard.style.opacity = '';
+                        nextCard.style.transition = '';
+                    }
+
+                    currentCardIndex = nextIndex;
+
+                    prevBtn.disabled = currentCardIndex === 0;
+                    nextBtn.disabled = currentCardIndex === totalCards - 1;
+                    progressDots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentCardIndex);
+                    });
+
+                    if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
+                        initInvisibleInk();
+                    }
+                }, 300);
+            } else {
+                // Snap back
+                currentCard.style.transform = 'translateX(0) scale(1)';
+                currentCard.style.opacity = '1';
+
+                if (nextCard) {
+                    nextCard.style.transform = `translateX(${diff > 0 ? 30 : -30}%) scale(0.85)`;
+                    nextCard.style.opacity = '0';
+
+                    setTimeout(() => {
+                        nextCard.classList.add('hidden');
+                        nextCard.style.transform = '';
+                        nextCard.style.opacity = '';
+                        nextCard.style.transition = '';
+                    }, 300);
+                }
+
+                setTimeout(() => {
+                    currentCard.style.transform = '';
+                    currentCard.style.opacity = '';
+                    currentCard.style.transition = '';
+                }, 300);
+            }
+
+            touchStartedInScrollable = false;
+            touchStartedInInk = false;
         }, { passive: true });
 
-        function handleSwipe() {
-            const swipeThreshold = 50; // minimum distance for swipe
-            const diff = touchStartX - touchEndX;
+        // Enable scrolling on message-chain
+        const messageChain = document.querySelector('.message-chain');
+        if (messageChain) {
+            let startY = 0;
+            let scrollTop = 0;
 
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    // Swiped left - go to next card
-                    navigateCard(1);
-                } else {
-                    // Swiped right - go to previous card
-                    navigateCard(-1);
-                }
+            messageChain.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].pageY;
+                scrollTop = messageChain.scrollTop;
+            }, { passive: true });
+
+            messageChain.addEventListener('touchmove', (e) => {
+                const y = e.touches[0].pageY;
+                const diff = startY - y;
+                messageChain.scrollTop = scrollTop + diff;
+            }, { passive: true });
+        }
+
+        // Card 0 flip handler with video control
+        const parkingLotVideo = document.getElementById('parkingLotVideo');
+
+        function flipCard0(card) {
+            const wasFlipped = card.classList.contains('flipped');
+            card.classList.toggle('flipped');
+
+            if (!wasFlipped) {
+                // Flipping to back - play video
+                parkingLotVideo.play();
+            } else {
+                // Flipping to front - pause and reset video
+                parkingLotVideo.pause();
+                parkingLotVideo.currentTime = 0;
             }
         }
 
-        // Card 2 flip handler
+        // Card 3 flip handler
         function flipCard2(card) {
             const wasFlipped = card.classList.contains('flipped');
             card.classList.toggle('flipped');
@@ -887,10 +1763,13 @@
 
             const ctx = inkCanvas.getContext('2d');
             let particles = [];
-            let isRevealed = false;
             let mouseX = -1000, mouseY = -1000;
             let isInteracting = false;
             const colors = ['#6495ED', '#FFB6C1', '#FFDAB9', '#87CEEB', '#DB7093'];
+            const pushRadius = 70;
+            const pushStrength = 100;
+            const springStrength = 0.015;
+            const friction = 0.92;
 
             function resizeCanvas() {
                 const rect = inkContainer.getBoundingClientRect();
@@ -903,7 +1782,7 @@
             function initParticles() {
                 particles = [];
                 const rect = inkContainer.getBoundingClientRect();
-                const numParticles = Math.floor((rect.width * rect.height) / 13);
+                const numParticles = Math.floor((rect.width * rect.height) / 12);
 
                 for (let i = 0; i < numParticles; i++) {
                     const x = Math.random() * rect.width;
@@ -913,64 +1792,60 @@
                         y: y,
                         baseX: x,
                         baseY: y,
-                        size: Math.random() * 4 + 2,
+                        vx: 0,
+                        vy: 0,
+                        size: Math.random() * 4 + 3,
                         color: colors[Math.floor(Math.random() * colors.length)],
-                        opacity: 1,
-                        phase: Math.random() * Math.PI * 2,
-                        removed: false
+                        phase: Math.random() * Math.PI * 2
                     });
                 }
             }
 
             function animate() {
-                if (isRevealed) return;
-
                 const rect = inkContainer.getBoundingClientRect();
                 ctx.clearRect(0, 0, rect.width, rect.height);
 
                 const time = Date.now() * 0.002;
-                let remainingParticles = 0;
 
-                particles.forEach((p, index) => {
-                    if (p.removed) return;
-
-                    // Gentle floating movement
-                    const offsetX = Math.sin(time + p.phase) * 3;
-                    const offsetY = Math.cos(time + p.phase * 0.7) * 3;
-                    const drawX = p.baseX + offsetX;
-                    const drawY = p.baseY + offsetY;
-
-                    // Check if touched (use base position for hit detection)
+                particles.forEach((p) => {
+                    // Push away from touch point
                     if (isInteracting) {
-                        const dx = p.baseX - mouseX;
-                        const dy = p.baseY - mouseY;
+                        const dx = p.x - mouseX;
+                        const dy = p.y - mouseY;
                         const dist = Math.sqrt(dx * dx + dy * dy);
-                        const radius = 40;
 
-                        if (dist < radius) {
-                            p.removed = true;
-                            return;
+                        if (dist < pushRadius && dist > 0) {
+                            const force = (pushRadius - dist) / pushRadius;
+                            const angle = Math.atan2(dy, dx);
+                            p.vx += Math.cos(angle) * force * pushStrength * 0.1;
+                            p.vy += Math.sin(angle) * force * pushStrength * 0.1;
                         }
+                    } else {
+                        // Spring back to base position only when not interacting
+                        const springX = (p.baseX - p.x) * springStrength;
+                        const springY = (p.baseY - p.y) * springStrength;
+                        p.vx += springX;
+                        p.vy += springY;
                     }
 
-                    remainingParticles++;
+                    // Apply friction
+                    p.vx *= friction;
+                    p.vy *= friction;
 
-                    // Draw particle with floating offset
+                    // Update position
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Gentle floating movement
+                    const floatX = Math.sin(time + p.phase) * 2;
+                    const floatY = Math.cos(time + p.phase * 0.7) * 2;
+
+                    // Draw particle at current position
                     ctx.beginPath();
-                    ctx.arc(drawX, drawY, p.size, 0, Math.PI * 2);
+                    ctx.arc(p.x + floatX, p.y + floatY, p.size, 0, Math.PI * 2);
                     ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacity;
                     ctx.fill();
                 });
-
-                ctx.globalAlpha = 1;
-
-                // Check if all particles removed
-                if (remainingParticles === 0) {
-                    isRevealed = true;
-                    inkContainer.classList.add('revealed');
-                    return;
-                }
 
                 requestAnimationFrame(animate);
             }
@@ -989,11 +1864,14 @@
                 };
             }
 
+            const inkHint = inkContainer.querySelector('.invisible-ink-hint');
+
             inkContainer.addEventListener('touchstart', (e) => {
                 isInteracting = true;
                 const pos = getEventPos(e);
                 mouseX = pos.x;
                 mouseY = pos.y;
+                if (inkHint) inkHint.classList.add('hidden');
                 e.stopPropagation();
             }, { passive: true });
 
@@ -1015,6 +1893,7 @@
                 const pos = getEventPos(e);
                 mouseX = pos.x;
                 mouseY = pos.y;
+                if (inkHint) inkHint.classList.add('hidden');
                 e.stopPropagation();
             });
 
@@ -1042,36 +1921,131 @@
 
             // Reset function
             inkResetFn = function() {
-                isRevealed = false;
-                inkContainer.classList.remove('revealed');
                 initParticles();
-                // Draw immediately
-                particles.forEach((p) => {
-                    ctx.beginPath();
-                    ctx.arc(p.baseX, p.baseY, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fill();
-                });
-                ctx.globalAlpha = 1;
-                animate();
+                if (inkHint) inkHint.classList.remove('hidden');
             };
 
-            // Initialize and draw immediately
+            // Initialize and start animation
             resizeCanvas();
-
-            // Draw particles immediately (no animation delay)
-            particles.forEach((p) => {
-                ctx.beginPath();
-                ctx.arc(p.baseX, p.baseY, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.opacity;
-                ctx.fill();
-            });
-            ctx.globalAlpha = 1;
-
             animate();
         }
+
+        // Floating hearts animation
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const colors = ['#FFB6C1', '#DB7093', '#FF69B4', '#FFC0CB', '#6495ED'];
+            const heartSVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+
+            function spawnHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartSVG;
+
+                const size = Math.random() * 20 + 10;
+                const left = Math.random() * 100;
+                const duration = (Math.random() * 10 + 15) * 3; // 3x slower
+                const delay = Math.random() * 5;
+
+                heart.style.cssText = `
+                    left: ${left}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    color: ${colors[Math.floor(Math.random() * colors.length)]};
+                    animation-duration: ${duration}s;
+                    animation-delay: ${delay}s;
+                `;
+
+                container.appendChild(heart);
+
+                // Remove heart after animation completes
+                setTimeout(() => {
+                    heart.remove();
+                }, (duration + delay) * 1000);
+            }
+
+            // Initial batch of hearts (27 hearts)
+            for (let i = 0; i < 27; i++) {
+                setTimeout(() => spawnHeart(), i * 100);
+            }
+
+            // Continue spawning hearts (3 every 1.5 seconds)
+            setInterval(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(spawnHeart, i * 50);
+                }
+            }, 1500);
+        }
+
+        // Start floating hearts
+        createFloatingHearts();
+
+        // Confetti celebration - only triggers once per session
+        let confettiTriggered = false;
+
+        function triggerConfetti() {
+            if (confettiTriggered) return;
+            confettiTriggered = true;
+
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#FFB6C1', '#6495ED', '#FFDAB9', '#87CEEB', '#DB7093', '#FFD700', '#FF69B4'];
+            const shapes = ['circle', 'square', 'triangle'];
+
+            for (let i = 0; i < 200; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+
+                    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const left = Math.random() * 100;
+                    const size = Math.random() * 8 + 6;
+                    const delay = Math.random() * 0.5;
+                    const duration = Math.random() * 2 + 2;
+
+                    let shapeStyle = '';
+                    if (shape === 'circle') {
+                        shapeStyle = 'border-radius: 50%;';
+                    } else if (shape === 'triangle') {
+                        shapeStyle = `
+                            width: 0;
+                            height: 0;
+                            border-left: ${size/2}px solid transparent;
+                            border-right: ${size/2}px solid transparent;
+                            border-bottom: ${size}px solid ${color};
+                            background: transparent;
+                        `;
+                    }
+
+                    confetti.style.cssText = `
+                        left: ${left}%;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: ${shape !== 'triangle' ? color : 'transparent'};
+                        ${shapeStyle}
+                        animation: confettiFall ${duration}s ease-out ${delay}s forwards;
+                    `;
+
+                    container.appendChild(confetti);
+
+                    // Cleanup after animation
+                    setTimeout(() => confetti.remove(), (duration + delay + 1) * 1000);
+                }, i * 20);
+            }
+            // Note: confettiTriggered stays true - confetti only plays once per session
+        }
+
+        // Watch for engagement card (card 5) becoming visible
+        const engagementCardObserver = new MutationObserver((mutations) => {
+            const engagementCard = document.querySelector('.card[data-card="5"]');
+            if (engagementCard && !engagementCard.classList.contains('hidden')) {
+                triggerConfetti();
+            }
+        });
+
+        // Observe card visibility changes
+        document.querySelectorAll('.card').forEach(card => {
+            engagementCardObserver.observe(card, { attributes: true, attributeFilter: ['class'] });
+        });
     </script>
 </body>
 </html>
