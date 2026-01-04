@@ -1116,6 +1116,51 @@
                 opacity: 0;
             }
         }
+
+        /* Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* iOS Motion Permission Button */
+        #motionPermissionBtn {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 32px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #6495ED, #FFB6C1);
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(100, 149, 237, 0.4);
+            cursor: pointer;
+            z-index: 10000;
+            animation: pulse 2s infinite;
+            bottom: calc(40px + env(safe-area-inset-bottom));
+        }
+
+        #motionPermissionBtn:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(100, 149, 237, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(100, 149, 237, 0.7);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1641,6 +1686,14 @@
             </div>
         </div>
     </div>
+
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- iOS Motion Permission Button (hidden by default) -->
+    <button id="motionPermissionBtn" style="display: none;">
+        Tap to Enable Motion
+    </button>
 
     <script>
         // Key dates - edit these to update stats
@@ -2477,6 +2530,167 @@
         document.querySelectorAll('.card').forEach(card => {
             engagementCardObserver.observe(card, { attributes: true, attributeFilter: ['class'] });
         });
+
+        // ========== GYROSCOPIC PARTICLE SYSTEM ==========
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        const permissionBtn = document.getElementById('motionPermissionBtn');
+
+        let particles = [];
+        let deviceTilt = { x: 0, y: 0 };
+        let motionEnabled = false;
+
+        // Resize canvas to fill screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Particle class
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+
+                // Color palette from Wedding Wrapped theme
+                const colors = [
+                    'rgba(100, 149, 237, 0.6)', // Cornflower Blue
+                    'rgba(255, 182, 193, 0.6)', // Light Pink
+                    'rgba(255, 218, 185, 0.6)', // Peach Puff
+                    'rgba(135, 206, 235, 0.5)', // Light Blue
+                ];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                // Gyroscope influence (stronger effect)
+                const tiltInfluence = 3;
+                const targetX = this.baseX + (deviceTilt.x * tiltInfluence);
+                const targetY = this.baseY + (deviceTilt.y * tiltInfluence);
+
+                // Smooth movement toward tilt position
+                this.x += (targetX - this.x) * 0.05;
+                this.y += (targetY - this.y) * 0.05;
+
+                // Gentle drift
+                this.baseX += this.speedX;
+                this.baseY += this.speedY;
+
+                // Wrap around edges
+                if (this.baseX > canvas.width + 50) this.baseX = -50;
+                if (this.baseX < -50) this.baseX = canvas.width + 50;
+                if (this.baseY > canvas.height + 50) this.baseY = -50;
+                if (this.baseY < -50) this.baseY = canvas.height + 50;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Create particles
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.min(100, Math.floor((canvas.width * canvas.height) / 15000));
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Handle device orientation
+        function handleOrientation(event) {
+            if (!motionEnabled) return;
+
+            // Beta: front-to-back tilt (-180 to 180)
+            // Gamma: left-to-right tilt (-90 to 90)
+            const beta = event.beta || 0;  // Y axis
+            const gamma = event.gamma || 0; // X axis
+
+            // Normalize and scale
+            deviceTilt.x = Math.max(-30, Math.min(30, gamma));
+            deviceTilt.y = Math.max(-30, Math.min(30, beta - 45)); // Offset for natural holding angle
+        }
+
+        // Check if device supports motion
+        function checkMotionSupport() {
+            // iOS 13+ requires permission
+            if (typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // Show button for iOS
+                permissionBtn.style.display = 'block';
+                permissionBtn.addEventListener('click', requestMotionPermission);
+            }
+            // Android and older iOS - just enable
+            else if (window.DeviceOrientationEvent) {
+                enableMotion();
+            }
+        }
+
+        // Request permission (iOS 13+)
+        async function requestMotionPermission() {
+            try {
+                console.log('Requesting motion permission...');
+                const permission = await DeviceOrientationEvent.requestPermission();
+                console.log('Permission result:', permission);
+
+                if (permission === 'granted') {
+                    enableMotion();
+                    permissionBtn.style.display = 'none';
+                } else {
+                    // Permission denied
+                    permissionBtn.textContent = 'Go to Settings → Safari → Motion & Orientation';
+                    permissionBtn.style.fontSize = '11px';
+                    permissionBtn.style.padding = '12px 20px';
+                    console.log('Permission denied by user');
+                }
+            } catch (error) {
+                console.error('Error requesting motion permission:', error);
+                permissionBtn.textContent = 'Error: ' + error.message;
+                permissionBtn.style.fontSize = '12px';
+
+                // If HTTPS required
+                if (error.message.includes('secure') || error.message.includes('https')) {
+                    setTimeout(() => {
+                        permissionBtn.textContent = 'HTTPS Required for Motion';
+                    }, 3000);
+                }
+            }
+        }
+
+        // Enable motion tracking
+        function enableMotion() {
+            motionEnabled = true;
+            window.addEventListener('deviceorientation', handleOrientation);
+            console.log('Gyroscopic particles enabled!');
+        }
+
+        // Initialize on load
+        checkMotionSupport();
     </script>
 </body>
 </html>
