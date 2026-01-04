@@ -1473,8 +1473,8 @@
                     <div class="image-container" style="position: relative;">
                         <video id="engagementVideo" src="assets/WatercolorEngagementVideo.mov" preload="auto" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
 
-                        <!-- Test slider for video scrubbing -->
-                        <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; z-index: 100;">
+                        <!-- Test slider for video scrubbing (hidden when motion is enabled) -->
+                        <div id="videoSliderContainer" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; z-index: 100;">
                             <input type="range" id="videoScrubSlider" min="0" max="100" value="50"
                                    style="width: 100%; -webkit-appearance: none; appearance: none; height: 8px; border-radius: 5px; background: linear-gradient(90deg, rgba(100,149,237,0.8), rgba(255,182,193,0.8)); outline: none; cursor: pointer;">
                             <div style="text-align: center; color: white; font-size: 10px; margin-top: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
@@ -2696,6 +2696,12 @@
             motionEnabled = true;
             window.addEventListener('deviceorientation', handleOrientation);
             console.log('Gyroscopic particles enabled!');
+
+            // Hide video slider when motion is enabled
+            const videoSliderContainer = document.getElementById('videoSliderContainer');
+            if (videoSliderContainer) {
+                videoSliderContainer.style.display = 'none';
+            }
         }
 
         // Initialize on load
@@ -2716,10 +2722,10 @@
                 engagementVideo.currentTime = engagementVideo.duration / 2;
             });
 
-            // Slider control for testing
+            // Slider control for testing (only works when motion is NOT enabled)
             if (videoScrubSlider) {
                 videoScrubSlider.addEventListener('input', (e) => {
-                    if (!videoReady) return;
+                    if (!videoReady || motionEnabled) return; // Don't allow slider when motion is enabled
                     const percentage = e.target.value / 100; // 0 to 1
                     engagementVideo.currentTime = percentage * engagementVideo.duration;
                 });
