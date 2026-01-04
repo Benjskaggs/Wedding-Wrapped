@@ -1470,8 +1470,17 @@
                         </svg>
                     </button>
                     <div class="card-date">November 13, 2025</div>
-                    <div class="image-container">
-                        <img src="assets/EngagementWatercolor.png" alt="Ben and Leah's engagement">
+                    <div class="image-container" style="position: relative;">
+                        <video id="engagementVideo" src="assets/WatercolorEngagementVideo.mov" preload="auto" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+
+                        <!-- Test slider for video scrubbing -->
+                        <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; z-index: 100;">
+                            <input type="range" id="videoScrubSlider" min="0" max="100" value="50"
+                                   style="width: 100%; -webkit-appearance: none; appearance: none; height: 8px; border-radius: 5px; background: linear-gradient(90deg, rgba(100,149,237,0.8), rgba(255,182,193,0.8)); outline: none; cursor: pointer;">
+                            <div style="text-align: center; color: white; font-size: 10px; margin-top: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                                Tilt Test Slider
+                            </div>
+                        </div>
                     </div>
                     <div class="content">
                         <span class="event-tag">She Said Yes!</span>
@@ -2691,6 +2700,67 @@
 
         // Initialize on load
         checkMotionSupport();
+
+        // ========== GYROSCOPIC VIDEO SCRUBBING ==========
+
+        const engagementVideo = document.getElementById('engagementVideo');
+        const videoScrubSlider = document.getElementById('videoScrubSlider');
+        let videoReady = false;
+
+        // Wait for video metadata to load
+        if (engagementVideo) {
+            engagementVideo.addEventListener('loadedmetadata', () => {
+                videoReady = true;
+                console.log('Video duration:', engagementVideo.duration);
+                // Start at middle frame
+                engagementVideo.currentTime = engagementVideo.duration / 2;
+            });
+
+            // Slider control for testing
+            if (videoScrubSlider) {
+                videoScrubSlider.addEventListener('input', (e) => {
+                    if (!videoReady) return;
+                    const percentage = e.target.value / 100; // 0 to 1
+                    engagementVideo.currentTime = percentage * engagementVideo.duration;
+                });
+
+                // Prevent slider from triggering card flip
+                videoScrubSlider.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+                videoScrubSlider.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                });
+            }
+
+            // Gyroscope control for video (when motion is enabled)
+            let lastGyroUpdate = 0;
+            const originalHandleOrientation = handleOrientation;
+
+            window.handleOrientation = function(event) {
+                // Call original particle handler
+                originalHandleOrientation(event);
+
+                // Video gyro control (throttled for performance)
+                const now = Date.now();
+                if (!videoReady || now - lastGyroUpdate < 50) return;
+                lastGyroUpdate = now;
+
+                const gamma = event.gamma || 0; // Left-right tilt (-90 to 90)
+
+                // Map gamma (-45 to 45) to video percentage (0 to 1)
+                // Left tilt (negative) = start, Right tilt (positive) = end
+                const clampedGamma = Math.max(-45, Math.min(45, gamma));
+                const percentage = (clampedGamma + 45) / 90; // Normalize to 0-1
+
+                engagementVideo.currentTime = percentage * engagementVideo.duration;
+
+                // Update slider to match gyro position
+                if (videoScrubSlider) {
+                    videoScrubSlider.value = percentage * 100;
+                }
+            };
+        }
     </script>
 </body>
 </html>
