@@ -164,7 +164,8 @@
             flex: none;
         }
 
-        .card-face.full-image .image-container img {
+        .card-face.full-image .image-container img,
+        .card-face.full-image .image-container video {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -189,12 +190,15 @@
         }
 
         .card[data-card="4"] .card-front .card-date,
-        .card[data-card="5"] .card-front .card-date {
+        .card[data-card="5"] .card-front .card-date,
+        .card[data-card="6"] .card-front .card-date,
+        .card[data-card="7"] .card-front .card-date,
+        .card[data-card="8"] .card-front .card-date {
             color: #000000;
             text-shadow: none;
         }
 
-        .card[data-card="6"] .card-front .card-date {
+        .card[data-card="9"] .card-front .card-date {
             color: #ffffff;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
@@ -527,13 +531,16 @@
         }
 
         .timeline-milestone[data-milestone="0"] { left: 5%; }
-        .timeline-milestone[data-milestone="1"] { left: 18%; }
-        .timeline-milestone[data-milestone="2"] { left: 31%; }
-        .timeline-milestone[data-milestone="3"] { left: 44%; }
-        .timeline-milestone[data-milestone="4"] { left: 57%; }
-        .timeline-milestone[data-milestone="5"] { left: 70%; }
-        .timeline-milestone[data-milestone="6"] { left: 83%; }
-        .timeline-milestone[data-milestone="7"] { left: 95%; }
+        .timeline-milestone[data-milestone="1"] { left: 14%; }
+        .timeline-milestone[data-milestone="2"] { left: 23%; }
+        .timeline-milestone[data-milestone="3"] { left: 32%; }
+        .timeline-milestone[data-milestone="4"] { left: 41%; }
+        .timeline-milestone[data-milestone="5"] { left: 50%; }
+        .timeline-milestone[data-milestone="6"] { left: 59%; }
+        .timeline-milestone[data-milestone="7"] { left: 68%; }
+        .timeline-milestone[data-milestone="8"] { left: 77%; }
+        .timeline-milestone[data-milestone="9"] { left: 86%; }
+        .timeline-milestone[data-milestone="10"] { left: 95%; }
 
         .timeline-milestone .heart-icon {
             display: none;
@@ -1117,50 +1124,6 @@
             }
         }
 
-        /* Particle Canvas */
-        #particleCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* iOS Motion Permission Button */
-        #motionPermissionBtn {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 16px 32px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: white;
-            background: linear-gradient(135deg, #6495ED, #FFB6C1);
-            border: none;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(100, 149, 237, 0.4);
-            cursor: pointer;
-            z-index: 10000;
-            animation: pulse 2s infinite;
-            bottom: calc(40px + env(safe-area-inset-bottom));
-        }
-
-        #motionPermissionBtn:active {
-            transform: translateX(-50%) scale(0.95);
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 4px 15px rgba(100, 149, 237, 0.4);
-            }
-            50% {
-                box-shadow: 0 4px 25px rgba(100, 149, 237, 0.7);
-            }
-        }
     </style>
 </head>
 <body>
@@ -1288,7 +1251,7 @@
                     <div class="content">
                         <span class="event-tag">Ghosted</span>
                         <p class="story-text">
-                            <span class="highlight">Leah ghosted Ben.</span> At least ghosts are transparent about their intentions...
+                            <span class="highlight">Leah ghosted Ben.</span> Apparently she had better things to do...
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1335,7 +1298,7 @@
                     <div class="content">
                         <span class="event-tag">First (Consensual) Photo Together</span>
                         <p class="story-text">
-                            After coming to her senses, Leah asked Ben out to mini golf.
+                            Against all odds, Leah asked <span class="highlight-pink">Ben</span> out to mini golf.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1416,8 +1379,44 @@
                 </div>
             </div>
 
-            <!-- August 29, 2024: California Road Trip -->
+            <!-- March 2024: I Love You -->
             <div class="card hidden" data-card="5" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="card-date">March 2024</div>
+                    <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                        <span class="event-tag">I Love You</span>
+                        <p class="story-text">
+                            Leah said <span class="highlight-pink">"I love you."</span> Ben had never loved somebody, so he didn't really know how to respond&mdash;or frankly how he felt. He took a few days to really consider why he felt so <span class="highlight">happy</span> and <span class="highlight">excited</span> about her. <span class="highlight">3 days later</span>, he said it back.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">Worth the Wait</span>
+                        <p class="back-story-text">
+                            It was the first time somebody had ever said those words to Ben. He needed <span class="highlight-pink">3 days</span> to understand what he was feeling&mdash;but once he knew, he never looked back.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- August 29, 2024: California Road Trip -->
+            <div class="card hidden" data-card="6" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front">
                     <button class="gallery-btn" onclick="event.stopPropagation(); openCaliforniaGallery();">
@@ -1432,7 +1431,7 @@
                     <div class="content">
                         <span class="event-tag">First Road Trip</span>
                         <p class="story-text">
-                            Ben and Leah embarked on their first <span class="highlight">road trip together</span> to California, visiting hometowns and making memories.
+                            Ben and Leah embarked on their first <span class="highlight">road trip together</span> to California, visiting Ben's hometown and making memories.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1460,8 +1459,80 @@
                 </div>
             </div>
 
-            <!-- November 13, 2024: The Proposal -->
-            <div class="card hidden" data-card="6" onclick="this.classList.toggle('flipped')">
+            <!-- May 2025: Florida / Long Distance -->
+            <div class="card hidden" data-card="7" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="card-date">May 2025</div>
+                    <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                        <span class="event-tag">1,813 Miles Apart</span>
+                        <p class="story-text">
+                            Ben left for <span class="highlight">Florida</span> for four months of work&mdash;the longest they'd ever been apart. After a year and a half of spending nearly every day together, suddenly all they had were phone calls and countdowns.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">Distance Made It Clear</span>
+                        <p class="back-story-text">
+                            The distance was hard&mdash;some nights were really hard. They took turns flying out to see each other <span class="highlight">once a month</span> to make it a little easier. But with every mile between them, something became <span class="highlight-pink">undeniably clear</span>. Missing her wasn't just missing her company; it was missing his <span class="highlight">best friend</span>, his favorite person, his home. That's when Ben knew for certain he wanted to spend the <span class="highlight-pink">rest of his life</span> with Leah.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- August 2025: Visiting Leah's Sister in Minnesota -->
+            <div class="card hidden" data-card="8" onclick="this.classList.toggle('flipped')">
+                <!-- Front of card -->
+                <div class="card-face card-front">
+                    <div class="card-date">August 2025</div>
+                    <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                        <span class="event-tag">Meet the Midwest</span>
+                        <p class="story-text">
+                            Ben got to show Leah <span class="highlight">his</span> California&mdash;but what about <span class="highlight-pink">her</span> side of the country? Leah's parents have since moved from her hometown of <span class="highlight">Chicago</span>, so instead they visited her sister in <span class="highlight-pink">Minnesota</span>&mdash;which is the Midwest after all.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip
+                    </div>
+                </div>
+
+                <!-- Back of card -->
+                <div class="card-face card-back">
+                    <div class="back-content">
+                        <span class="back-event-tag">Close Enough</span>
+                        <p class="back-story-text">
+                            It wasn't Chicago, but it was <span class="highlight-pink">Leah's people</span> and <span class="highlight">Leah's world</span>&mdash;and that's all that mattered. Ben finally got to see where her warmth comes from.
+                        </p>
+                    </div>
+                    <div class="flip-hint">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                        </svg>
+                        Tap to flip back
+                    </div>
+                </div>
+            </div>
+
+            <!-- November 13, 2025: The Proposal -->
+            <div class="card hidden" data-card="9" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front full-image">
                     <button class="gallery-btn" onclick="event.stopPropagation(); openGallery();">
@@ -1473,14 +1544,6 @@
                     <div class="image-container" style="position: relative;">
                         <video id="engagementVideo" src="assets/WatercolorEngagementVideo.mp4" preload="auto" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
 
-                        <!-- Test slider for video scrubbing (hidden when motion is enabled) -->
-                        <div id="videoSliderContainer" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; z-index: 100;">
-                            <input type="range" id="videoScrubSlider" min="0" max="100" value="50"
-                                   style="width: 100%; -webkit-appearance: none; appearance: none; height: 8px; border-radius: 5px; background: linear-gradient(90deg, rgba(100,149,237,0.8), rgba(255,182,193,0.8)); outline: none; cursor: pointer;">
-                            <div style="text-align: center; color: white; font-size: 10px; margin-top: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
-                                Tilt Test Slider
-                            </div>
-                        </div>
                     </div>
                     <div class="content">
                         <span class="event-tag">She Said Yes!</span>
@@ -1514,7 +1577,7 @@
             </div>
 
             <!-- Final Card: See Your Wrapped -->
-            <div class="card hidden" data-card="7">
+            <div class="card hidden" data-card="10">
                 <div class="card-face card-front wrapped-summary-card">
                     <div class="wrapped-summary-prompt">
                         <h2 class="wrapped-prompt-title">Your Story So Far</h2>
@@ -1570,6 +1633,21 @@
                     </svg>
                 </div>
                 <div class="timeline-milestone" data-milestone="7" onclick="jumpToCard(7)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="8" onclick="jumpToCard(8)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="9" onclick="jumpToCard(9)">
+                    <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="timeline-milestone" data-milestone="10" onclick="jumpToCard(10)">
                     <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
                     </svg>
@@ -1668,7 +1746,17 @@
                 <div class="stat-subtitle">Since November 13, 2025</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">8</div>
+                <div class="stat-value">10</div>
+                <div class="stat-label">Seasons Together</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; font-size: 0.9rem; color: #555;">
+                    <div>3 winters</div>
+                    <div>3 springs</div>
+                    <div>2 summers</div>
+                    <div>2 falls</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">9</div>
                 <div class="stat-label">States Visited</div>
                 <div class="stat-list">
                     <div>Minnesota</div>
@@ -1679,6 +1767,7 @@
                     <div>Arizona</div>
                     <div>Alabama</div>
                     <div>Colorado</div>
+                    <div>Indiana</div>
                 </div>
             </div>
             <div class="stat-card">
@@ -1696,13 +1785,7 @@
         </div>
     </div>
 
-    <!-- Particle Canvas -->
-    <canvas id="particleCanvas"></canvas>
 
-    <!-- iOS Motion Permission Button (hidden by default) -->
-    <button id="motionPermissionBtn" style="display: none;">
-        Tap to Enable Motion
-    </button>
 
     <script>
         // Key dates - edit these to update stats
@@ -2529,7 +2612,7 @@
 
         // Watch for engagement card (card 6) becoming visible
         const engagementCardObserver = new MutationObserver((mutations) => {
-            const engagementCard = document.querySelector('.card[data-card="6"]');
+            const engagementCard = document.querySelector('.card[data-card="9"]');
             if (engagementCard && !engagementCard.classList.contains('hidden')) {
                 triggerConfetti();
             }
@@ -2540,233 +2623,6 @@
             engagementCardObserver.observe(card, { attributes: true, attributeFilter: ['class'] });
         });
 
-        // ========== GYROSCOPIC PARTICLE SYSTEM ==========
-
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        const permissionBtn = document.getElementById('motionPermissionBtn');
-
-        let particles = [];
-        let deviceTilt = { x: 0, y: 0 };
-        let motionEnabled = false;
-
-        // Resize canvas to fill screen
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // Particle class
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.baseX = this.x;
-                this.baseY = this.y;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-
-                // Color palette from Wedding Wrapped theme
-                const colors = [
-                    'rgba(100, 149, 237, 0.6)', // Cornflower Blue
-                    'rgba(255, 182, 193, 0.6)', // Light Pink
-                    'rgba(255, 218, 185, 0.6)', // Peach Puff
-                    'rgba(135, 206, 235, 0.5)', // Light Blue
-                ];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            update() {
-                // Gyroscope influence (stronger effect)
-                const tiltInfluence = 3;
-                const targetX = this.baseX + (deviceTilt.x * tiltInfluence);
-                const targetY = this.baseY + (deviceTilt.y * tiltInfluence);
-
-                // Smooth movement toward tilt position
-                this.x += (targetX - this.x) * 0.05;
-                this.y += (targetY - this.y) * 0.05;
-
-                // Gentle drift
-                this.baseX += this.speedX;
-                this.baseY += this.speedY;
-
-                // Wrap around edges
-                if (this.baseX > canvas.width + 50) this.baseX = -50;
-                if (this.baseX < -50) this.baseX = canvas.width + 50;
-                if (this.baseY > canvas.height + 50) this.baseY = -50;
-                if (this.baseY < -50) this.baseY = canvas.height + 50;
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // Create particles
-        function initParticles() {
-            particles = [];
-            const particleCount = Math.min(100, Math.floor((canvas.width * canvas.height) / 15000));
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
-        initParticles();
-
-        // Animation loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // Handle device orientation
-        function handleOrientation(event) {
-            if (!motionEnabled) return;
-
-            // Beta: front-to-back tilt (-180 to 180)
-            // Gamma: left-to-right tilt (-90 to 90)
-            const beta = event.beta || 0;  // Y axis
-            const gamma = event.gamma || 0; // X axis
-
-            // Normalize and scale
-            deviceTilt.x = Math.max(-30, Math.min(30, gamma));
-            deviceTilt.y = Math.max(-30, Math.min(30, beta - 45)); // Offset for natural holding angle
-        }
-
-        // Check if device supports motion
-        function checkMotionSupport() {
-            // iOS 13+ requires permission
-            if (typeof DeviceOrientationEvent !== 'undefined' &&
-                typeof DeviceOrientationEvent.requestPermission === 'function') {
-                // Show button for iOS
-                permissionBtn.style.display = 'block';
-                permissionBtn.addEventListener('click', requestMotionPermission);
-            }
-            // Android and older iOS - just enable
-            else if (window.DeviceOrientationEvent) {
-                enableMotion();
-            }
-        }
-
-        // Request permission (iOS 13+)
-        async function requestMotionPermission() {
-            try {
-                console.log('Requesting motion permission...');
-                const permission = await DeviceOrientationEvent.requestPermission();
-                console.log('Permission result:', permission);
-
-                if (permission === 'granted') {
-                    enableMotion();
-                    permissionBtn.style.display = 'none';
-                } else {
-                    // Permission denied
-                    permissionBtn.textContent = 'Go to Settings → Safari → Motion & Orientation';
-                    permissionBtn.style.fontSize = '11px';
-                    permissionBtn.style.padding = '12px 20px';
-                    console.log('Permission denied by user');
-                }
-            } catch (error) {
-                console.error('Error requesting motion permission:', error);
-                permissionBtn.textContent = 'Error: ' + error.message;
-                permissionBtn.style.fontSize = '12px';
-
-                // If HTTPS required
-                if (error.message.includes('secure') || error.message.includes('https')) {
-                    setTimeout(() => {
-                        permissionBtn.textContent = 'HTTPS Required for Motion';
-                    }, 3000);
-                }
-            }
-        }
-
-        // Enable motion tracking
-        function enableMotion() {
-            motionEnabled = true;
-            window.addEventListener('deviceorientation', handleOrientation);
-            console.log('Gyroscopic particles enabled!');
-
-            // Hide video slider when motion is enabled
-            const videoSliderContainer = document.getElementById('videoSliderContainer');
-            if (videoSliderContainer) {
-                videoSliderContainer.style.display = 'none';
-            }
-        }
-
-        // Initialize on load
-        checkMotionSupport();
-
-        // ========== GYROSCOPIC VIDEO SCRUBBING ==========
-
-        const engagementVideo = document.getElementById('engagementVideo');
-        const videoScrubSlider = document.getElementById('videoScrubSlider');
-        let videoReady = false;
-
-        // Wait for video metadata to load
-        if (engagementVideo) {
-            engagementVideo.addEventListener('loadedmetadata', () => {
-                videoReady = true;
-                console.log('Video duration:', engagementVideo.duration);
-                // Start at middle frame
-                engagementVideo.currentTime = engagementVideo.duration / 2;
-            });
-
-            // Slider control for testing (only works when motion is NOT enabled)
-            if (videoScrubSlider) {
-                videoScrubSlider.addEventListener('input', (e) => {
-                    if (!videoReady || motionEnabled) return; // Don't allow slider when motion is enabled
-                    const percentage = e.target.value / 100; // 0 to 1
-                    engagementVideo.currentTime = percentage * engagementVideo.duration;
-                });
-
-                // Prevent slider from triggering card flip
-                videoScrubSlider.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-                videoScrubSlider.addEventListener('touchstart', (e) => {
-                    e.stopPropagation();
-                });
-            }
-
-            // Gyroscope control for video (when motion is enabled)
-            let lastGyroUpdate = 0;
-            const originalHandleOrientation = handleOrientation;
-
-            window.handleOrientation = function(event) {
-                // Call original particle handler
-                originalHandleOrientation(event);
-
-                // Video gyro control (throttled for performance)
-                const now = Date.now();
-                if (!videoReady || now - lastGyroUpdate < 50) return;
-                lastGyroUpdate = now;
-
-                const gamma = event.gamma || 0; // Left-right tilt (-90 to 90)
-
-                // Map gamma (-45 to 45) to video percentage (0 to 1)
-                // Left tilt (negative) = start, Right tilt (positive) = end
-                const clampedGamma = Math.max(-45, Math.min(45, gamma));
-                const percentage = (clampedGamma + 45) / 90; // Normalize to 0-1
-
-                engagementVideo.currentTime = percentage * engagementVideo.duration;
-
-                // Update slider to match gyro position
-                if (videoScrubSlider) {
-                    videoScrubSlider.value = percentage * 100;
-                }
-            };
-        }
     </script>
 </body>
 </html>
