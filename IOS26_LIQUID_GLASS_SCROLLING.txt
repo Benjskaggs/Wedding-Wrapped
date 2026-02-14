@@ -1,0 +1,131 @@
+iOS 26 LIQUID GLASS - CONTENT SCROLLING BEHIND THE TOOLBAR
+============================================================
+
+PROBLEM
+-------
+In iOS 26, Safari introduced "Liquid Glass" - a translucent, frosted-glass
+toolbar/address bar. Content on a webpage can visually scroll BEHIND this
+translucent bar, creating a gorgeous edge-to-edge effect where your page
+content is visible through the glass.
+
+However, this only works for content that scrolls via the BODY (native
+document-level scrolling). If your scrollable content lives inside a
+`position: fixed` container with `overflow-y: auto`, Safari treats it as
+an isolated scroll context. The content will scroll inside its box, but it
+will NOT pass behind the Liquid Glass toolbar. The toolbar just sits on top
+with nothing showing through.
+
+This was our exact situation: the "Ben & Leah Wrapped" summary page was a
+full-screen overlay using:
+
+    .summary-content {
+        position: fixed;
+        inset: 0;
+        overflow-y: auto;
+        background: #B8D4FF;
+    }
+
+It scrolled fine, but the stat cards stopped at the toolbar boundary. No
+Liquid Glass bleed-through.
+
+
+THE FIX
+-------
+Convert the scrollable overlay from a fixed-position container with its own
+scroll to a normal document-flow element that scrolls via the body.
+
+Three things had to change:
+
+1. REMOVE FIXED POSITIONING from .summary-content
+
+   BEFORE:
+       .summary-content {
+           position: fixed;
+           inset: 0;
+           overflow-y: auto;
+       }
+
+   AFTER:
+       .summary-content {
+           position: relative;
+           min-height: 100vh;
+       }
+
+   This puts the summary content in normal document flow instead of a
+   fixed overlay. The body itself becomes the scroll container.
+
+
+2. UNLOCK html/body SCROLLING when the summary is open
+
+   The page normally locks scrolling with `overflow: hidden` and
+   `height: 100%` on both html and body (to prevent the card interface
+   from scrolling). When the summary opens, these constraints must be
+   removed:
+
+       html.summary-active {
+           overflow: auto !important;
+           height: auto !important;
+       }
+       html.summary-active body {
+           overflow: auto !important;
+           height: auto !important;
+       }
+
+   CRITICAL: Both `overflow: auto` AND `height: auto` are required.
+   Without `height: auto`, the body is capped at 100% of the viewport -
+   there's nothing taller than the screen, so nothing scrolls.
+
+
+3. RESET SCROLL POSITION on open/close
+
+   Since the body is now the scroll container, you need to reset its
+   scroll position when toggling the summary:
+
+       function openWrappedSummary() {
+           window.scrollTo(0, 0);  // Start at the top
+           ...
+       }
+
+       function closeWrappedSummary() {
+           window.scrollTo(0, 0);  // Reset before re-locking
+           ...
+       }
+
+
+WHY THIS WORKS
+--------------
+iOS 26 Safari's Liquid Glass toolbar is translucent by design. When the
+BODY scrolls (native document-level scrolling), Safari automatically
+composites the web content layer so it extends behind the toolbar. The
+translucent glass effect reveals the content underneath as it passes by.
+
+Fixed-position containers with their own overflow scroll are treated as
+separate compositing layers. Safari does not extend their content behind
+the toolbar because they aren't part of the main document scroll flow.
+
+The key insight: it's not about any special CSS property or meta tag.
+It's about WHERE the scroll happens. Body scroll = content behind glass.
+Fixed container scroll = content stops at the toolbar.
+
+
+PREREQUISITES (already in place)
+---------------------------------
+- viewport-fit=cover in the meta viewport tag:
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+- The html element background color should match your page background
+  when the scrollable view is active:
+  html.summary-active { background-color: #B8D4FF !important; }
+
+- Hide other page content so only the scrollable content is visible:
+  body.summary-open .wrapped-container { display: none; }
+
+
+COMPATIBILITY NOTES
+-------------------
+- This behavior is specific to iOS 26+ Safari with the Liquid Glass design.
+- Older iOS versions won't show the translucent effect but the page will
+  still scroll normally.
+- The fix doesn't break anything on other browsers/platforms.
+- Safari's toolbar layout mode (Compact, Bottom, Top) doesn't matter -
+  all three use Liquid Glass and support this behavior.

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="transparent">
@@ -43,14 +43,30 @@
             background-color: transparent;
         }
 
-        /* When Gallery is open, the ROOT must turn black */
+        /* When Gallery is open, the ROOT must turn black and allow body scrolling
+           so content naturally passes behind the iOS 26 Liquid Glass toolbar */
         html.gallery-active {
             background-color: #000000 !important;
+            overflow: auto !important;
+            height: auto !important;
+        }
+        html.gallery-active body {
+            overflow: auto !important;
+            height: auto !important;
+            overscroll-behavior: none;
         }
 
-        /* When Summary is open, the ROOT must turn blue */
+        /* When Summary is open, the ROOT must turn blue and allow body scrolling
+           so content naturally passes behind the iOS 26 Liquid Glass toolbar */
         html.summary-active {
             background-color: #B8D4FF !important;
+            overflow: auto !important;
+            height: auto !important;
+        }
+        html.summary-active body {
+            overflow: auto !important;
+            height: auto !important;
+            overscroll-behavior: none;
         }
 
         /* SAFE AREA FIX: Container has NO padding - safe-area padding is on children only */
@@ -465,6 +481,35 @@
             display: none;
         }
 
+        .card-hint {
+            position: absolute;
+            top: 14px;
+            left: 16px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(90, 74, 74, 0.5);
+            z-index: 10;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .card-face.full-image .card-hint {
+            color: rgba(255, 255, 255, 0.6);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .card[data-card="0"] .card-front .card-hint,
+        .card[data-card="9"] .card-front .card-hint {
+            color: rgba(90, 74, 74, 0.5);
+            text-shadow: none;
+        }
+
+        .card-hint.fade-out {
+            opacity: 0;
+        }
+
         .flip-hint svg {
             width: 14px;
             height: 14px;
@@ -760,7 +805,7 @@
             fill: #000000;
         }
 
-        /* Gallery - body NEVER scrolls */
+        /* Gallery - hide cards, body scrolls for Liquid Glass effect */
         body.gallery-open .wrapped-container {
             display: none;
         }
@@ -774,18 +819,12 @@
             display: none;
         }
 
-        /* Gallery content - fixed scroll container */
+        /* Gallery content - body-scrolling for Liquid Glass */
         .gallery-content {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            position: relative;
             z-index: 1001;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
+            min-height: 100vh;
             padding: 60px 16px 40px;
             padding-top: calc(60px + env(safe-area-inset-top));
             padding-bottom: calc(40px + env(safe-area-inset-bottom));
@@ -912,19 +951,16 @@
             fill: #6495ED;
         }
 
-        /* Wrapped Summary - body NEVER scrolls */
+        /* Wrapped Summary - hide cards, body scrolls for Liquid Glass effect */
         body.summary-open .wrapped-container {
             display: none;
         }
 
         .summary-content {
             display: none;
-            position: fixed;
-            inset: 0;
+            position: relative;
             z-index: 1001;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
+            min-height: 100vh;
             padding: calc(60px + env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
             background: #B8D4FF;
         }
@@ -1167,7 +1203,7 @@
                     <div class="content">
                         <span class="event-tag">First Encounter</span>
                         <p class="story-text">
-                            Ben and his friends heard two girls screaming <span class="highlight">Sue Me</span> by Sabrina Carpenter in their car.
+                            Two girls were belting <span class="highlight">Sue Me</span> by Sabrina Carpenter in a parking lot. Ben spotted a certain blonde — and let's just say he <span class="highlight-pink">wasn't looking away</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1181,7 +1217,7 @@
                 <!-- Back of card -->
                 <div class="card-face card-back full-image">
                     <div class="video-container">
-                        <video id="parkingLotVideo" playsinline loop>
+                        <video id="parkingLotVideo" playsinline loop muted>
                             <source src="assets/ParkingLotEncounter.mov" type="video/quicktime">
                             <source src="assets/ParkingLotEncounter.mov" type="video/mp4">
                         </video>
@@ -1228,7 +1264,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">The Aftermath</span>
                         <p class="back-story-text">
-                            Ben attempted to return the ice cream bowl to Leah but she <span class="highlight-pink">kindly refused</span> further dates and Ben eventually gave up hope of another date and threw away both bowls <span class="highlight">5 months later</span>.
+                            Ben attempted to drop off the ice cream bowl to Leah but she <span class="highlight-pink">kindly refused</span> further dates and Ben eventually gave up hope of another date and threw away both bowls <span class="highlight">5 months later</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1246,7 +1282,7 @@
                 <div class="card-face card-front">
                     <div class="card-date">May 2023</div>
                     <div class="image-container">
-                        <img src="assets/SadGhost.png" alt="Sad ghost representing Ben being ghosted">
+                        <img data-src="assets/SadGhost.png" alt="Sad ghost representing Ben being ghosted">
                     </div>
                     <div class="content">
                         <span class="event-tag">Ghosted</span>
@@ -1258,7 +1294,7 @@
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
                         </svg>
-                        Tap to flip
+                        Tap for receipts
                     </div>
                 </div>
 
@@ -1275,7 +1311,7 @@
                         <div class="message leah">so i need to leave my apt at 6😭 so tn isn't gonna work after all i'm so sorry!</div>
                         <div class="message leah">this week is crazy for me</div>
                         <div class="message-context">ANOTHER DAY...</div>
-                        <div class="message ben">I know tmrw is Memorial Day and ur "not the biggest pick ball gal" but i say let's play…</div>
+                        <div class="message ben">I know tmrw is Memorial Day and ur "not the biggest pickleball gal" but i say let's play…</div>
                         <div class="message leah">i'm working at the golf course all day tomorrow😭</div>
                     </div>
                     <div class="flip-hint">
@@ -1293,10 +1329,10 @@
                 <div class="card-face card-front full-image">
                     <div class="card-date">January 12, 2024</div>
                     <div class="image-container">
-                        <img src="assets/FirstDateMiniGolf.jpg" alt="Ben and Leah at mini golf on January 12th, 2024">
+                        <img data-src="assets/FirstDateMiniGolf.jpg" alt="Ben and Leah at mini golf on January 12th, 2024">
                     </div>
                     <div class="content">
-                        <span class="event-tag">First (Consensual) Photo Together</span>
+                        <span class="event-tag">First Photo Together</span>
                         <p class="story-text">
                             Against all odds, Leah asked <span class="highlight-pink">Ben</span> out to mini golf.
                         </p>
@@ -1313,7 +1349,7 @@
                 <div class="card-face card-back full-image">
                     <div class="card-date">September 11, 2022</div>
                     <div class="image-container">
-                        <img src="assets/FirstPhotoTogether.jpg" alt="Ben and Leah's first photo together">
+                        <img data-src="assets/FirstPhotoTogether.jpg" alt="Ben and Leah's first photo together">
                     </div>
                     <!-- Invisible ink overlay -->
                     <div class="invisible-ink-container" id="invisibleInk">
@@ -1346,7 +1382,7 @@
                 <div class="card-face card-front">
                     <div class="card-date">February 14, 2024</div>
                     <div class="image-container">
-                        <img src="assets/GirlfriendWatercolor.png" alt="Valentine's Day">
+                        <img data-src="assets/GirlfriendWatercolor.png" alt="Valentine's Day">
                     </div>
                     <div class="content">
                         <span class="event-tag">Valentine's Day</span>
@@ -1383,7 +1419,7 @@
             <div class="card hidden" data-card="5" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front">
-                    <div class="card-date">March 2024</div>
+                    <div class="card-date">March 1, 2024</div>
                     <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                         <span class="event-tag">I Love You</span>
                         <p class="story-text">
@@ -1426,7 +1462,7 @@
                     </button>
                     <div class="card-date">August 29, 2024</div>
                     <div class="image-container">
-                        <img src="assets/RoadTripWatercolor.png" alt="Ben and Leah on their California road trip">
+                        <img data-src="assets/RoadTripWatercolor.png" alt="Ben and Leah on their California road trip">
                     </div>
                     <div class="content">
                         <span class="event-tag">First Road Trip</span>
@@ -1444,6 +1480,11 @@
 
                 <!-- Back of card -->
                 <div class="card-face card-back">
+                    <button class="gallery-btn" onclick="event.stopPropagation(); openCaliforniaGallery();">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                        </svg>
+                    </button>
                     <div class="back-content">
                         <span class="back-event-tag">The Adventure</span>
                         <p class="back-story-text">
@@ -1542,7 +1583,7 @@
                     </button>
                     <div class="card-date">November 13, 2025</div>
                     <div class="image-container" style="position: relative;">
-                        <video id="engagementVideo" src="assets/WatercolorEngagementVideo.mp4" preload="auto" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <video id="engagementVideo" data-src="assets/WatercolorEngagementVideo.mp4" preload="none" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
 
                     </div>
                     <div class="content">
@@ -1561,10 +1602,15 @@
 
                 <!-- Back of card -->
                 <div class="card-face card-back">
+                    <button class="gallery-btn" onclick="event.stopPropagation(); openGallery();">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                        </svg>
+                    </button>
                     <div class="back-content">
                         <span class="back-event-tag">The Secret Mission</span>
                         <p class="back-story-text">
-                            Ben had a ring and a problem: take Leah anywhere pretty and she'd <span class="highlight-pink">totally know</span>. So he enlisted her work, <span class="highlight">Cords Club</span>, to stage a "fall photoshoot" for an earring collection. While Leah wandered through the park scouting the perfect shot... Ben appeared out of nowhere. She had <span class="highlight-pink">absolutely no clue</span>. Mission accomplished.
+                            Ben had a ring and a problem: take Leah anywhere scenic and she'd <span class="highlight-pink">immediately suspect something</span>. So he got her work, <span class="highlight">Cords Club</span>, to send her to a park up Provo Canyon for a "fall photoshoot." While she was scouting the perfect shot, Ben showed up. She had <span class="highlight-pink">no idea</span>.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1671,13 +1717,19 @@
         <h2 class="gallery-title">The Proposal</h2>
         <div class="gallery-grid">
             <div class="gallery-item">
-                <img src="assets/EngagementWatercolor.png" alt="Engagement photo">
+                <img src="assets/DSCF2983.jpg" alt="Engagement photo">
             </div>
             <div class="gallery-item">
-                <img src="assets/EngagementWatercolor.png" alt="Engagement photo 2">
+                <img src="assets/DSC02612.JPG" alt="Engagement photo">
             </div>
             <div class="gallery-item">
-                <img src="assets/EngagementWatercolor.png" alt="Engagement photo 3">
+                <img src="assets/DSCF3067.JPG" alt="Engagement photo">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/DSCF3082.JPG" alt="Engagement photo">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/DSCF3145.JPG" alt="Engagement photo">
             </div>
         </div>
     </div>
@@ -1788,6 +1840,20 @@
 
 
     <script>
+        // Prevent pinch-to-zoom and double-tap zoom
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+
         // Key dates - edit these to update stats
         const DATE_FIRST_MET = '2019-01-27';
         const DATE_STARTED_DATING = '2024-02-14';
@@ -1831,6 +1897,8 @@
             document.documentElement.classList.add('gallery-active');
             document.body.classList.add('gallery-open');
             document.getElementById('bleed-layer').style.display = 'none';
+            document.getElementById('confettiContainer').style.display = 'none';
+            window.scrollTo(0, 0);
 
             // Force a theme-color update for the notch
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
@@ -1844,6 +1912,8 @@
             document.documentElement.classList.add('gallery-active');
             document.body.classList.add('gallery-open');
             document.getElementById('bleed-layer').style.display = 'none';
+            document.getElementById('confettiContainer').style.display = 'none';
+            window.scrollTo(0, 0);
 
             // Force a theme-color update for the notch
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
@@ -1880,6 +1950,8 @@
         }
 
         function closeGallery() {
+            window.scrollTo(0, 0);
+
             // Hide both galleries
             document.getElementById('engagementGallery').style.display = 'none';
             document.getElementById('californiaGallery').style.display = 'none';
@@ -1887,9 +1959,15 @@
             document.documentElement.classList.remove('gallery-active');
             document.body.classList.remove('gallery-open');
             document.getElementById('bleed-layer').style.display = '';
+            document.getElementById('confettiContainer').style.display = '';
 
-            // Explicitly reset background
-            document.documentElement.style.backgroundColor = 'transparent';
+            // Explicitly reset inline styles to let CSS rules take over cleanly
+            document.documentElement.style.backgroundColor = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.height = '';
+            document.body.style.backgroundColor = '';
+            document.body.style.overflow = '';
+            document.body.style.height = '';
 
             document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent');
         }
@@ -1897,6 +1975,8 @@
         // Ensure gallery and summary are closed on page load (fixes refresh issue)
         document.body.classList.remove('gallery-open');
         document.body.classList.remove('summary-open');
+        document.documentElement.classList.remove('gallery-active');
+        document.documentElement.classList.remove('summary-active');
 
         // Close gallery on escape key
         document.addEventListener('keydown', (e) => {
@@ -1911,6 +1991,10 @@
             document.documentElement.classList.add('summary-active');
             document.body.classList.add('summary-open');
             document.getElementById('bleed-layer').style.display = 'none';
+            document.getElementById('confettiContainer').style.display = 'none';
+
+            // Scroll to top so summary starts from the beginning
+            window.scrollTo(0, 0);
 
             // Force a theme-color update
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#B8D4FF');
@@ -1947,12 +2031,21 @@
         }
 
         function closeWrappedSummary() {
+            // Scroll back to top before closing so body doesn't retain scroll offset
+            window.scrollTo(0, 0);
+
             document.documentElement.classList.remove('summary-active');
             document.body.classList.remove('summary-open');
             document.getElementById('bleed-layer').style.display = '';
+            document.getElementById('confettiContainer').style.display = '';
 
-            // Explicitly reset background
-            document.documentElement.style.backgroundColor = 'transparent';
+            // Explicitly reset inline styles to let CSS rules take over cleanly
+            document.documentElement.style.backgroundColor = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.height = '';
+            document.body.style.backgroundColor = '';
+            document.body.style.overflow = '';
+            document.body.style.height = '';
 
             document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent');
         }
@@ -2011,6 +2104,25 @@
             updateTimelineProgress(progress, true);
         }
 
+        function preloadAdjacentCards(index) {
+            const indicesToLoad = [index - 1, index, index + 1];
+            indicesToLoad.forEach(i => {
+                if (i < 0 || i >= totalCards) return;
+                const card = cards[i];
+                // Swap data-src to src on images
+                card.querySelectorAll('img[data-src]').forEach(img => {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                });
+                // Swap data-src to src on videos
+                card.querySelectorAll('video[data-src]').forEach(video => {
+                    video.src = video.dataset.src;
+                    video.removeAttribute('data-src');
+                    video.preload = 'auto';
+                });
+            });
+        }
+
         function jumpToCard(targetIndex) {
             if (targetIndex === currentCardIndex || targetIndex < 0 || targetIndex >= totalCards) {
                 return; // Already on this card or invalid index
@@ -2027,6 +2139,7 @@
 
             // Update card visibility and timeline
             updateCard();
+            preloadAdjacentCards(currentCardIndex);
 
             // Initialize invisible ink if jumping to card 3
             if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
@@ -2093,12 +2206,14 @@
                     if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
                         initInvisibleInk();
                     }
+                    preloadAdjacentCards(currentCardIndex);
                 }, 300);
             }
         }
 
         // Initialize on page load
         updateCard();
+        preloadAdjacentCards(currentCardIndex);
 
         // Swipe gesture support with partial drag
         let touchStartX = 0;
@@ -2239,6 +2354,7 @@
                     if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
                         initInvisibleInk();
                     }
+                    preloadAdjacentCards(currentCardIndex);
                 }, 300);
             } else {
                 // Snap back
@@ -2622,6 +2738,47 @@
         document.querySelectorAll('.card').forEach(card => {
             engagementCardObserver.observe(card, { attributes: true, attributeFilter: ['class'] });
         });
+
+        // Card interaction hints
+        (function() {
+            let hasFlipped = false;
+            let hasNavigated = false;
+
+            // Add "tap to flip" hint to every card front
+            cards.forEach(card => {
+                if (card.dataset.card === '10') return; // Skip wrapped card
+                const front = card.querySelector('.card-front');
+                if (front) {
+                    const hint = document.createElement('div');
+                    hint.className = 'card-hint';
+                    hint.textContent = 'tap to flip';
+                    front.appendChild(hint);
+                }
+                const back = card.querySelector('.card-back');
+                if (back) {
+                    const hint = document.createElement('div');
+                    hint.className = 'card-hint';
+                    hint.textContent = 'swipe to navigate';
+                    hint.style.opacity = '0';
+                    back.appendChild(hint);
+                }
+            });
+
+            // Watch for first flip — then reveal "swipe to navigate" on all backs
+            const flipObserver = new MutationObserver(() => {
+                if (hasFlipped) return;
+                const flippedCard = document.querySelector('.card.flipped');
+                if (flippedCard) {
+                    hasFlipped = true;
+                    document.querySelectorAll('.card-back .card-hint').forEach(hint => {
+                        hint.style.opacity = '';
+                    });
+                }
+            });
+            cards.forEach(card => {
+                flipObserver.observe(card, { attributes: true, attributeFilter: ['class'] });
+            });
+        })();
 
     </script>
 </body>
