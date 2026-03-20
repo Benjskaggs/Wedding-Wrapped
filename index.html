@@ -2242,12 +2242,37 @@
 
         document.getElementById('roadTripLayers').querySelectorAll('.layer').forEach(layer => {
             layer.addEventListener('animationend', () => {
+                layer.style.animation = 'none'; // release fill-mode lock so gyro can move the layer
                 layer.style.opacity = '1';
                 layer.style.transition = 'transform 0.12s ease-out';
             });
         });
 
-        document.addEventListener('touchstart', enableGyro, { once: true });
+        // iOS 13+ requires requestPermission from a direct user gesture AND HTTPS.
+        // Show a small button on card 0 if permission hasn't been granted yet.
+        function showGyroBtn() {
+            if (gyroActive) return;
+            const existing = document.getElementById('gyroBtn');
+            if (existing) return;
+            const btn = document.createElement('button');
+            btn.id = 'gyroBtn';
+            btn.textContent = '✦ Enable Motion';
+            btn.style.cssText = 'position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:20px;padding:6px 16px;font-size:0.75rem;font-family:Montserrat,sans-serif;letter-spacing:1px;cursor:pointer;backdrop-filter:blur(8px);';
+            btn.addEventListener('click', () => {
+                enableGyro();
+                btn.remove();
+            });
+            document.querySelector('.card[data-card="0"]').appendChild(btn);
+        }
+
+        if (typeof DeviceOrientationEvent !== 'undefined' &&
+            typeof DeviceOrientationEvent.requestPermission === 'function') {
+            // iOS — needs explicit tap + HTTPS
+            showGyroBtn();
+        } else {
+            // Android / desktop — enable immediately
+            enableGyro();
+        }
 
         function navigateCard(direction) {
             const newIndex = currentCardIndex + direction;
