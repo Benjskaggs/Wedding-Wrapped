@@ -200,6 +200,10 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
+        .card[data-card="0"] .card-front {
+            background: #000000;
+        }
+
         .card[data-card="0"] .card-front .card-date {
             color: #ffffff;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -393,6 +397,36 @@
             object-fit: contain;
             border-radius: 16px;
         }
+
+        /* Stacked layers for card 0 */
+        .road-trip-layers {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .road-trip-layers .layer {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0;
+            opacity: 0;
+        }
+
+        @keyframes layerSlideIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+
+        .road-trip-layers.animate .layer-car      { animation: layerSlideIn 0.5s ease forwards 0s;    }
+        .road-trip-layers.animate .layer-ben      { animation: layerSlideIn 0.5s ease forwards 0.35s; }
+        .road-trip-layers.animate .layer-leah     { animation: layerSlideIn 0.5s ease forwards 0.35s; }
+        .road-trip-layers.animate .layer-mountains{ animation: layerSlideIn 0.5s ease forwards 0.7s;  }
+        .road-trip-layers.animate .layer-y        { animation: layerSlideIn 0.5s ease forwards 1.05s; }
 
         .content {
             padding: 20px 24px 28px;
@@ -1198,7 +1232,13 @@
                 <div class="card-face card-front full-image">
                     <div class="card-date">January 27th, 2019</div>
                     <div class="image-container">
-                        <img src="assets/ParkingLotEncounter.png" alt="Parking lot where Ben and Leah first met">
+                        <div class="road-trip-layers" id="roadTripLayers">
+                            <img src="assets/Car.png" class="layer layer-car" alt="Car">
+                            <img src="assets/Ben.png" class="layer layer-ben" alt="Ben">
+                            <img src="assets/Leah.png" class="layer layer-leah" alt="Leah">
+                            <img src="assets/Mountains.png" class="layer layer-mountains" alt="Mountains">
+                            <img src="assets/Y.png" class="layer layer-y" alt="Y">
+                        </div>
                     </div>
                     <div class="content">
                         <span class="event-tag">First Encounter</span>
@@ -2145,7 +2185,69 @@
             if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
                 initInvisibleInk();
             }
+
+            // Trigger stacked layer animation if jumping to card 0
+            if (currentCardIndex === 0) {
+                triggerRoadTripAnimation();
+            }
         }
+
+        function triggerRoadTripAnimation() {
+            const layers = document.getElementById('roadTripLayers');
+            if (!layers) return;
+            layers.querySelectorAll('.layer').forEach(layer => {
+                layer.style.animation = '';
+                layer.style.opacity = '';
+                layer.style.transition = '';
+                layer.style.transform = '';
+            });
+            layers.classList.remove('animate');
+            void layers.offsetWidth;
+            layers.classList.add('animate');
+        }
+
+        // --- Gyroscope parallax for card 0 layers ---
+        const gyroDepths = { 'layer-car': 1, 'layer-ben': 2, 'layer-leah': 2, 'layer-mountains': 3, 'layer-y': 4 };
+        const gyroScale = 6;
+        let gyroActive = false;
+
+        function handleGyro(e) {
+            const card0 = document.querySelector('.card[data-card="0"]');
+            if (!card0 || card0.classList.contains('hidden') || card0.classList.contains('flipped')) return;
+            const layers = document.getElementById('roadTripLayers');
+            if (!layers) return;
+            const tiltX = Math.max(-30, Math.min(30, e.gamma || 0));
+            const tiltY = Math.max(-30, Math.min(30, (e.beta || 45) - 45));
+            layers.querySelectorAll('.layer').forEach(layer => {
+                const depthKey = Array.from(layer.classList).find(c => gyroDepths[c]);
+                const depth = gyroDepths[depthKey] || 1;
+                const x = (tiltX / 30) * depth * gyroScale;
+                const y = (tiltY / 30) * depth * gyroScale;
+                layer.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        function enableGyro() {
+            if (gyroActive) return;
+            if (typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(state => { if (state === 'granted') { window.addEventListener('deviceorientation', handleGyro); gyroActive = true; } })
+                    .catch(() => {});
+            } else {
+                window.addEventListener('deviceorientation', handleGyro);
+                gyroActive = true;
+            }
+        }
+
+        document.getElementById('roadTripLayers').querySelectorAll('.layer').forEach(layer => {
+            layer.addEventListener('animationend', () => {
+                layer.style.opacity = '1';
+                layer.style.transition = 'transform 0.12s ease-out';
+            });
+        });
+
+        document.addEventListener('touchstart', enableGyro, { once: true });
 
         function navigateCard(direction) {
             const newIndex = currentCardIndex + direction;
@@ -2206,6 +2308,12 @@
                     if (currentCardIndex === 3 && typeof initInvisibleInk === 'function') {
                         initInvisibleInk();
                     }
+
+                    // Trigger stacked layer animation when arriving at card 0
+                    if (currentCardIndex === 0) {
+                        triggerRoadTripAnimation();
+                    }
+
                     preloadAdjacentCards(currentCardIndex);
                 }, 300);
             }
@@ -2214,6 +2322,7 @@
         // Initialize on page load
         updateCard();
         preloadAdjacentCards(currentCardIndex);
+        triggerRoadTripAnimation();
 
         // Swipe gesture support with partial drag
         let touchStartX = 0;
