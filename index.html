@@ -392,35 +392,6 @@
             border-radius: 16px;
         }
 
-        /* Stacked layers for card 0 */
-        .road-trip-layers {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .road-trip-layers .layer {
-            position: absolute;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 0;
-            opacity: 0;
-        }
-
-        @keyframes layerSlideIn {
-            from { opacity: 0; transform: translateY(18px) scale(0.96); }
-            to   { opacity: 1; transform: translateY(0)    scale(1); }
-        }
-
-        .road-trip-layers.animate .layer-car      { animation: layerSlideIn 0.5s ease forwards 0s;    }
-        .road-trip-layers.animate .layer-ben      { animation: layerSlideIn 0.5s ease forwards 0.35s; }
-        .road-trip-layers.animate .layer-leah     { animation: layerSlideIn 0.5s ease forwards 0.35s; }
-        .road-trip-layers.animate .layer-mountains{ animation: layerSlideIn 0.5s ease forwards 0.7s;  }
-        .road-trip-layers.animate .layer-y        { animation: layerSlideIn 0.5s ease forwards 1.05s; }
 
         .content {
             padding: 20px 24px 28px;
@@ -2099,36 +2070,6 @@
         const DATE_STARTED_DATING = '2024-02-14';
         const DATE_ENGAGED = '2025-11-13';
 
-        // Helper to update theme color (affects iOS Safari status bar)
-        function setThemeColor(color) {
-            console.log('setThemeColor called with:', color); // Debug
-
-            // Method 1: Update theme-color meta tag
-            const themeColorMeta = document.getElementById('themeColor');
-            themeColorMeta.setAttribute('content', color);
-
-            // Method 2: Remove and re-add the meta tag (forces Safari to re-read)
-            const newMeta = themeColorMeta.cloneNode(true);
-            newMeta.setAttribute('content', color);
-            themeColorMeta.parentNode.replaceChild(newMeta, themeColorMeta);
-            newMeta.id = 'themeColor';
-
-            // Method 3: Update CSS variable
-            document.documentElement.style.setProperty('--status-bar-color', color);
-
-            // Method 4: Direct inline style on html (highest specificity)
-            // For transparent, remove inline styles to let CSS take over
-            if (color === 'transparent') {
-                document.documentElement.style.removeProperty('background-color');
-                document.body.style.removeProperty('background-color');
-            } else {
-                document.documentElement.style.backgroundColor = color;
-                document.body.style.backgroundColor = color;
-            }
-
-            // Force repaint
-            void document.documentElement.offsetHeight;
-        }
 
         // Gallery functions
         function openGallery() {
