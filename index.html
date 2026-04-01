@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="transparent">
     <title>Ben and Leah Wrapped</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -201,7 +203,7 @@
         }
 
         .card[data-card="0"] .card-front {
-            background: #000000;
+            background: #ffffff;
         }
 
         .card[data-card="0"] .card-front .card-date {
@@ -209,14 +211,6 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .card[data-card="4"] .card-front .card-date,
-        .card[data-card="5"] .card-front .card-date,
-        .card[data-card="6"] .card-front .card-date,
-        .card[data-card="7"] .card-front .card-date,
-        .card[data-card="8"] .card-front .card-date {
-            color: #000000;
-            text-shadow: none;
-        }
 
         .card[data-card="9"] .card-front .card-date {
             color: #ffffff;
@@ -529,12 +523,7 @@
             transition: opacity 0.4s ease;
         }
 
-        .card-face.full-image .card-hint {
-            color: rgba(255, 255, 255, 0.6);
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        .card[data-card="0"] .card-front .card-hint,
+        .card[data-card="0"] .card-front .card-hint:not(.card-hint-encounter),
         .card[data-card="9"] .card-front .card-hint {
             color: rgba(90, 74, 74, 0.5);
             text-shadow: none;
@@ -542,6 +531,29 @@
 
         .card-hint.fade-out {
             opacity: 0;
+        }
+
+        .card-hint-encounter {
+            background: rgba(255, 255, 255, 0.82) !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: unset !important;
+            background-clip: unset !important;
+            color: rgba(20, 20, 20, 0.9) !important;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 4px 12px;
+            border-radius: 999px;
+            display: inline-block;
+            width: fit-content;
+            position: relative;
+            animation: glowSweep 2s linear infinite;
+        }
+
+        @keyframes glowSweep {
+            0%   { box-shadow: 0 0 10px 4px rgba(100, 149, 237, 0.9),  0 0 20px 6px rgba(255, 218, 185, 0.5), 0 0 6px 2px rgba(255, 182, 193, 0.3); }
+            33%  { box-shadow: 0 0 10px 4px rgba(255, 218, 185, 0.9),  0 0 20px 6px rgba(255, 182, 193, 0.6), 0 0 6px 2px rgba(100, 149, 237, 0.3); }
+            66%  { box-shadow: 0 0 10px 4px rgba(255, 182, 193, 0.9),  0 0 20px 6px rgba(100, 149, 237, 0.5), 0 0 6px 2px rgba(255, 218, 185, 0.3); }
+            100% { box-shadow: 0 0 10px 4px rgba(100, 149, 237, 0.9),  0 0 20px 6px rgba(255, 218, 185, 0.5), 0 0 6px 2px rgba(255, 182, 193, 0.3); }
         }
 
         .flip-hint svg {
@@ -1107,6 +1119,34 @@
             border-bottom: none;
         }
 
+        #statesMap {
+            width: 100%;
+            margin-top: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #statesMap svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #statesMap .state {
+            fill: #e0e8f0;
+            stroke: #ffffff;
+            stroke-width: 0.8;
+            transition: fill 0.5s ease;
+        }
+
+        #statesMap .state.visited {
+            fill: #e0e8f0;
+        }
+
+        #statesMap .state.highlight {
+            fill: #6495ED;
+        }
+
         /* SAFE AREA FIX: Background layer is FIXED to extend into safe areas */
         /* This is the ONLY element that provides the gradient background */
         #bleed-layer {
@@ -1172,6 +1212,129 @@
             overflow: hidden;
         }
 
+        /* Intro tutorial overlay */
+        #introOverlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 24px;
+            background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 1px solid rgba(100, 149, 237, 0.2);
+            box-shadow: 0 8px 32px rgba(100, 149, 237, 0.15), 0 4px 12px rgba(0,0,0,0.08);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 36px 28px 32px;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            cursor: pointer;
+        }
+
+        #introOverlay.dismissed {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.97);
+        }
+
+        .intro-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.45);
+        }
+
+        .intro-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            width: 100%;
+            flex: 1;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .intro-step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .intro-step:last-child {
+            border-bottom: none;
+        }
+
+        .intro-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .intro-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: rgba(255,255,255,0.85);
+        }
+
+        .intro-step-text {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .intro-step-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .intro-step-sub {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.4;
+        }
+
+        .intro-begin {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: rgba(255,255,255,0.35);
+            animation: introBeginPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes introBeginPulse {
+            0%, 100% { opacity: 0.35; }
+            50% { opacity: 0.75; }
+        }
+
+        /* Animated icons */
+        .icon-flip { animation: iconFlip 3s ease-in-out infinite; }
+        @keyframes iconFlip {
+            0%, 60%, 100% { transform: rotateY(0deg); }
+            30% { transform: rotateY(180deg); }
+        }
+
+        .icon-swipe { animation: iconSwipe 2s ease-in-out infinite; }
+        @keyframes iconSwipe {
+            0%, 100% { transform: translateX(0); }
+            30% { transform: translateX(-6px); }
+            70% { transform: translateX(6px); }
+        }
+
+        .icon-gallery { animation: iconGallery 2.5s ease-in-out infinite; }
+        @keyframes iconGallery {
+            0%, 100% { opacity: 0.85; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
         .confetti {
             position: absolute;
             width: 10px;
@@ -1226,24 +1389,59 @@
                 </button>
             </div>
 
+            <!-- Intro Tutorial Overlay -->
+            <div id="introOverlay">
+                <div class="intro-title">How it works</div>
+                <div class="intro-steps">
+                    <div class="intro-step">
+                        <div class="intro-icon">
+                            <svg class="icon-flip" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 6V4l-4 4 4 4V9.5c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5H6c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6z"/>
+                            </svg>
+                        </div>
+                        <div class="intro-step-text">
+                            <div class="intro-step-label">Tap to flip</div>
+                            <div class="intro-step-sub">Read both sides of every card</div>
+                        </div>
+                    </div>
+                    <div class="intro-step">
+                        <div class="intro-icon">
+                            <svg class="icon-swipe" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 7l-5 5 5 5V7zm8 10l5-5-5-5v10z"/>
+                            </svg>
+                        </div>
+                        <div class="intro-step-text">
+                            <div class="intro-step-label">Swipe left or right</div>
+                            <div class="intro-step-sub">Move through the story in order</div>
+                        </div>
+                    </div>
+                    <div class="intro-step">
+                        <div class="intro-icon">
+                            <svg class="icon-gallery" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                            </svg>
+                        </div>
+                        <div class="intro-step-text">
+                            <div class="intro-step-label">Tap the gallery icon</div>
+                            <div class="intro-step-sub">Dive deeper with photos</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="intro-begin">Swipe or tap to begin</div>
+            </div>
+
             <!-- January 2019: First Encounter -->
             <div class="card" data-card="0" onclick="flipCard0(this)">
                 <!-- Front of card -->
                 <div class="card-face card-front full-image">
                     <div class="card-date">January 27th, 2019</div>
                     <div class="image-container">
-                        <div class="road-trip-layers" id="roadTripLayers">
-                            <img src="assets/Car.png" class="layer layer-car" alt="Car">
-                            <img src="assets/Ben.png" class="layer layer-ben" alt="Ben">
-                            <img src="assets/Leah.png" class="layer layer-leah" alt="Leah">
-                            <img src="assets/Mountains.png" class="layer layer-mountains" alt="Mountains">
-                            <img src="assets/Y.png" class="layer layer-y" alt="Y">
-                        </div>
+                        <img src="assets/FirstMeeting2.png" alt="First Meeting">
                     </div>
                     <div class="content">
                         <span class="event-tag">First Encounter</span>
                         <p class="story-text">
-                            Two girls were belting <span class="highlight">Sue Me</span> by Sabrina Carpenter in a parking lot. Ben spotted a certain blonde — and let's just say he <span class="highlight-pink">wasn't looking away</span>.
+                            Two girls were belting "Sue Me" by Sabrina Carpenter in a parking lot. Ben spotted a certain blonde. From that point on, he was paying pretty close attention.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1265,7 +1463,7 @@
                     <div class="content">
                         <span class="event-tag">The Beginning</span>
                         <p class="story-text">
-                            Somehow they ended up in the girls' car, sang and danced together for a bit, and followed each other on <span class="highlight-pink">Instagram</span>.
+                            Somehow, everyone ended up in the girls' car, singing and dancing for a while before the night ended with an Instagram follow.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1280,15 +1478,15 @@
             <!-- May 3, 2023: First Date at Color Me Mine -->
             <div class="card hidden" data-card="1" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">May 3, 2023</div>
                     <div class="image-container">
-                        <img src="assets/FirstDateBowls.png" alt="Ice cream bowls painted at Color Me Mine on Ben and Leah's first date">
+                        <img src="assets/FirstDate2.png" alt="Ice cream bowls painted at Color Me Mine on Ben and Leah's first date">
                     </div>
                     <div class="content">
                         <span class="event-tag">First Date</span>
                         <p class="story-text">
-                            <span class="highlight">4</span> years later, with a friendly nudge from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at <span class="highlight">Color Me Mine</span>.
+                            Four years later, with a little encouragement from mutual friends, Ben asked Leah out. Their first date was spent painting ice cream bowls at Color Me Mine.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1304,7 +1502,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">The Aftermath</span>
                         <p class="back-story-text">
-                            Ben attempted to drop off the ice cream bowl to Leah but she <span class="highlight-pink">kindly refused</span> further dates and Ben eventually gave up hope of another date and threw away both bowls <span class="highlight">5 months later</span>.
+                            Ben tried to drop off Leah's bowl afterward, but she kindly passed on another date. Eventually he gave up on the idea of a second chance. Five months later, he threw both bowls away.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1319,15 +1517,15 @@
             <!-- May 2023: Ghosted -->
             <div class="card hidden" data-card="2" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">May 2023</div>
                     <div class="image-container">
-                        <img data-src="assets/SadGhost.png" alt="Sad ghost representing Ben being ghosted">
+                        <img data-src="assets/Ghost.png" alt="Sad ghost representing Ben being ghosted">
                     </div>
                     <div class="content">
-                        <span class="event-tag">Ghosted</span>
+                        <span class="event-tag">Not Quite There</span>
                         <p class="story-text">
-                            <span class="highlight">Leah ghosted Ben.</span> Apparently she had better things to do...
+                            After Color Me Mine, Leah wasn't particularly interested in Ben and kept putting off going out again.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1369,12 +1567,12 @@
                 <div class="card-face card-front full-image">
                     <div class="card-date">January 12, 2024</div>
                     <div class="image-container">
-                        <img data-src="assets/FirstDateMiniGolf.jpg" alt="Ben and Leah at mini golf on January 12th, 2024">
+                        <img data-src="assets/SnowyDate.png" alt="Ben and Leah's snowy hot chocolate walk">
                     </div>
                     <div class="content">
-                        <span class="event-tag">First Photo Together</span>
+                        <span class="event-tag">She Asked First</span>
                         <p class="story-text">
-                            Against all odds, Leah asked <span class="highlight-pink">Ben</span> out to mini golf.
+                            Six months later, Leah asked Ben to mini golf, and he said yes. But six days felt too long to wait, so he talked her into a walk through the year's first snowfall with hot chocolate drinks.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1402,9 +1600,9 @@
                         </div>
                     </div>
                     <div class="content">
-                        <span class="event-tag">First Photo Together</span>
+                        <span class="event-tag">Sparks</span>
                         <p class="story-text">
-                            Technically this is... but who's keeping count?
+                            This time, it felt different. The night was easy, fun, and over too soon. Neither of them wanted it to end.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1419,15 +1617,15 @@
             <!-- February 14, 2024: Valentine's Day -->
             <div class="card hidden" data-card="4" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">February 14, 2024</div>
                     <div class="image-container">
-                        <img data-src="assets/GirlfriendWatercolor.png" alt="Valentine's Day">
+                        <img data-src="assets/LosslessValentines.PNG" alt="Valentine's Day">
                     </div>
                     <div class="content">
                         <span class="event-tag">Valentine's Day</span>
                         <p class="story-text">
-                            Their first <span class="highlight">Valentine's Day</span> together.
+                            Their first Valentine's Day together.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1443,7 +1641,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">Official</span>
                         <p class="back-story-text">
-                            Ben asked Leah to be his <span class="highlight-pink">girlfriend</span>.
+                            Leah had heard from friends that Ben planned to ask her to be his girlfriend on Valentine's Day. She waited patiently, but the evening passed without flowers or a question. Ben was nervous and didn't have his plan perfected yet. Eventually, she asked him how he felt. That is when he asked her to be his girlfriend.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1458,12 +1656,15 @@
             <!-- March 2024: I Love You -->
             <div class="card hidden" data-card="5" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">March 1, 2024</div>
-                    <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                    <div class="image-container">
+                        <img data-src="assets/LosslessILoveYou.PNG" alt="I Love You">
+                    </div>
+                    <div class="content">
                         <span class="event-tag">I Love You</span>
                         <p class="story-text">
-                            Leah said <span class="highlight-pink">"I love you."</span> Ben had never loved somebody, so he didn't really know how to respond&mdash;or frankly how he felt. He took a few days to really consider why he felt so <span class="highlight">happy</span> and <span class="highlight">excited</span> about her. <span class="highlight">3 days later</span>, he said it back.
+                            Leah said, "I love you." Ben had never been in love before, so he didn't say it back right away. He took a few days to sit with what he was feeling and understand why being with her made him so happy.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1479,7 +1680,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">Worth the Wait</span>
                         <p class="back-story-text">
-                            It was the first time somebody had ever said those words to Ben. He needed <span class="highlight-pink">3 days</span> to understand what he was feeling&mdash;but once he knew, he never looked back.
+                            Three days later, he said it back. It was the first time anyone had ever said those words to Ben. He needed a few days to understand what he was feeling, but once he knew, he never looked back.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1494,7 +1695,7 @@
             <!-- August 29, 2024: California Road Trip -->
             <div class="card hidden" data-card="6" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <button class="gallery-btn" onclick="event.stopPropagation(); openCaliforniaGallery();">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
@@ -1502,12 +1703,12 @@
                     </button>
                     <div class="card-date">August 29, 2024</div>
                     <div class="image-container">
-                        <img data-src="assets/RoadTripWatercolor.png" alt="Ben and Leah on their California road trip">
+                        <img data-src="assets/RoadTrip.png" alt="California road trip">
                     </div>
                     <div class="content">
                         <span class="event-tag">First Road Trip</span>
                         <p class="story-text">
-                            Ben and Leah embarked on their first <span class="highlight">road trip together</span> to California, visiting Ben's hometown and making memories.
+                            Ben and Leah took their first road trip together to California, where Ben got to show her his hometown and some of the places that made him who he is.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1528,7 +1729,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">The Adventure</span>
                         <p class="back-story-text">
-                            From <span class="highlight">Disneyland</span> to beach bike rides, from <span class="highlight">Bob's Big Boy</span> to swan boat dates at Echo Park, they explored Ben's childhood stomping grounds and created their own California memories together.
+                            From Disneyland to beach bike rides, from Bob's Big Boy to swan boats at Echo Park, they explored Ben's old stomping grounds and made California memories of their own.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1543,12 +1744,15 @@
             <!-- May 2025: Florida / Long Distance -->
             <div class="card hidden" data-card="7" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">May 2025</div>
-                    <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                    <div class="image-container">
+                        <img data-src="assets/LongDistance2.png" alt="Long distance">
+                    </div>
+                    <div class="content">
                         <span class="event-tag">1,813 Miles Apart</span>
                         <p class="story-text">
-                            Ben left for <span class="highlight">Florida</span> for four months of work&mdash;the longest they'd ever been apart. After a year and a half of spending nearly every day together, suddenly all they had were phone calls and countdowns.
+                            Ben left for Florida for four months of work, the longest they had ever been apart. After spending nearly every day together, it suddenly turned into phone calls, flight plans, and countdowns.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1562,9 +1766,9 @@
                 <!-- Back of card -->
                 <div class="card-face card-back">
                     <div class="back-content">
-                        <span class="back-event-tag">Distance Made It Clear</span>
+                        <span class="back-event-tag">Distance</span>
                         <p class="back-story-text">
-                            The distance was hard&mdash;some nights were really hard. They took turns flying out to see each other <span class="highlight">once a month</span> to make it a little easier. But with every mile between them, something became <span class="highlight-pink">undeniably clear</span>. Missing her wasn't just missing her company; it was missing his <span class="highlight">best friend</span>, his favorite person, his home. That's when Ben knew for certain he wanted to spend the <span class="highlight-pink">rest of his life</span> with Leah.
+                            It wasn't easy. They took turns visiting each other once a month, which helped, but it still felt like a long time. Being apart made Ben realize how much of his day-to-day life was better with her in it.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1579,12 +1783,15 @@
             <!-- August 2025: Visiting Leah's Sister in Minnesota -->
             <div class="card hidden" data-card="8" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
-                <div class="card-face card-front">
+                <div class="card-face card-front full-image">
                     <div class="card-date">August 2025</div>
-                    <div class="content" style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                    <div class="image-container">
+                        <img data-src="assets/Minnesota.jpeg" alt="Visiting Leah's sister in Minnesota">
+                    </div>
+                    <div class="content">
                         <span class="event-tag">Meet the Midwest</span>
                         <p class="story-text">
-                            Ben got to show Leah <span class="highlight">his</span> California&mdash;but what about <span class="highlight-pink">her</span> side of the country? Leah's parents have since moved from her hometown of <span class="highlight">Chicago</span>, so instead they visited her sister in <span class="highlight-pink">Minnesota</span>&mdash;which is the Midwest after all.
+                            Leah had seen Ben's California, so it was only fair he got to see a little more of her world too. Since her parents had moved from Chicago, they visited her sister in Minnesota instead.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1600,7 +1807,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">Close Enough</span>
                         <p class="back-story-text">
-                            It wasn't Chicago, but it was <span class="highlight-pink">Leah's people</span> and <span class="highlight">Leah's world</span>&mdash;and that's all that mattered. Ben finally got to see where her warmth comes from.
+                            It wasn't Leah's hometown, but it was her people, her roots, and her side of the country. Ben got to see where so much of her warmth comes from.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1622,14 +1829,13 @@
                         </svg>
                     </button>
                     <div class="card-date">November 13, 2025</div>
-                    <div class="image-container" style="position: relative;">
-                        <video id="engagementVideo" data-src="assets/WatercolorEngagementVideo.mp4" preload="none" muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
-
+                    <div class="image-container">
+                        <img data-src="assets/EngagementWatercolor.png" alt="Engagement">
                     </div>
                     <div class="content">
                         <span class="event-tag">She Said Yes!</span>
                         <p class="story-text">
-                            After <span class="highlight">nearly 2 years</span> of dating, Ben popped the question in a park up Provo Canyon.
+                            After nearly two years together, Ben proposed in a park up Provo Canyon.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1650,7 +1856,7 @@
                     <div class="back-content">
                         <span class="back-event-tag">The Secret Mission</span>
                         <p class="back-story-text">
-                            Ben had a ring and a problem: take Leah anywhere scenic and she'd <span class="highlight-pink">immediately suspect something</span>. So he got her work, <span class="highlight">Cords Club</span>, to send her to a park up Provo Canyon for a "fall photoshoot." While she was scouting the perfect shot, Ben showed up. She had <span class="highlight-pink">no idea</span>.
+                            Ben had a ring and needed to keep it a surprise. So her work, Cords Club, sent her to a park up Provo Canyon for a "fall photoshoot." Ben met her there. She had no idea what was coming.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1666,7 +1872,7 @@
             <div class="card hidden" data-card="10">
                 <div class="card-face card-front wrapped-summary-card">
                     <div class="wrapped-summary-prompt">
-                        <h2 class="wrapped-prompt-title">Your Story So Far</h2>
+                        <h2 class="wrapped-prompt-title">Their Story So Far</h2>
                         <p class="wrapped-prompt-text">From a parking lot singalong to forever.</p>
                         <button class="wrapped-summary-btn" onclick="event.stopPropagation(); openWrappedSummary();">
                             <span>See Your Wrapped</span>
@@ -1847,20 +2053,10 @@
                     <div>2 falls</div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value">9</div>
+            <div class="stat-card" id="statesStatCard">
+                <div class="stat-value">10</div>
                 <div class="stat-label">States Visited</div>
-                <div class="stat-list">
-                    <div>Minnesota</div>
-                    <div>California</div>
-                    <div>Texas</div>
-                    <div>Florida</div>
-                    <div>Utah</div>
-                    <div>Arizona</div>
-                    <div>Alabama</div>
-                    <div>Colorado</div>
-                    <div>Indiana</div>
-                </div>
+                <div id="statesMap"></div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">6</div>
@@ -1873,6 +2069,10 @@
                     <div>Sundance Bluebird Cafe</div>
                     <div>Jonas Brothers</div>
                 </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #6495ED 0%, #DB7093 50%, #FFB6C1 100%); text-align: center; padding: 32px 24px;">
+                <div style="font-size: 3rem; font-weight: 800; color: #ffffff; line-height: 1; margin-bottom: 8px;">1</div>
+                <div style="font-family: 'Great Vibes', cursive; font-size: 2rem; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.15);">forever beginning</div>
             </div>
         </div>
     </div>
@@ -2049,6 +2249,9 @@
                         if (entry.isIntersecting) {
                             setTimeout(() => {
                                 entry.target.classList.add('visible');
+                                if (entry.target.id === 'statesStatCard') {
+                                    animateVisitedStates();
+                                }
                             }, index * 100);
                         }
                     });
@@ -2240,13 +2443,16 @@
             }
         }
 
-        document.getElementById('roadTripLayers').querySelectorAll('.layer').forEach(layer => {
-            layer.addEventListener('animationend', () => {
-                layer.style.animation = 'none'; // release fill-mode lock so gyro can move the layer
-                layer.style.opacity = '1';
-                layer.style.transition = 'transform 0.12s ease-out';
+        const roadTripLayers = document.getElementById('roadTripLayers');
+        if (roadTripLayers) {
+            roadTripLayers.querySelectorAll('.layer').forEach(layer => {
+                layer.addEventListener('animationend', () => {
+                    layer.style.animation = 'none'; // release fill-mode lock so gyro can move the layer
+                    layer.style.opacity = '1';
+                    layer.style.transition = 'transform 0.12s ease-out';
+                });
             });
-        });
+        }
 
         // iOS 13+ requires requestPermission from a direct user gesture AND HTTPS.
         // Show a small button on card 0 if permission hasn't been granted yet.
@@ -2358,24 +2564,47 @@
         const cardContainer = document.querySelector('.card-container');
         const swipeThreshold = 80; // minimum distance to complete swipe
 
+        let touchStartY = 0;
+        let directionLocked = null; // 'horizontal' | 'vertical' | null
+
         cardContainer.addEventListener('touchstart', (e) => {
-            // Check if touch started in a scrollable element or invisible ink
             touchStartedInScrollable = e.target.closest('.message-chain') !== null;
             touchStartedInInk = e.target.closest('.invisible-ink-container') !== null;
 
-            if (touchStartedInScrollable || touchStartedInInk) return;
+            if (touchStartedInInk) return;
 
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
             touchCurrentX = touchStartX;
-            isDragging = true;
+            directionLocked = null;
+            isDragging = false;
 
-            // Disable transition during drag
-            const currentCard = cards[currentCardIndex];
-            currentCard.style.transition = 'none';
+            if (!touchStartedInScrollable) {
+                isDragging = true;
+                const currentCard = cards[currentCardIndex];
+                currentCard.style.transition = 'none';
+            }
         }, { passive: true });
 
         cardContainer.addEventListener('touchmove', (e) => {
-            if (!isDragging || touchStartedInScrollable || touchStartedInInk) return;
+            if (touchStartedInInk) return;
+
+            const deltaX = e.changedTouches[0].screenX - touchStartX;
+            const deltaY = e.changedTouches[0].screenY - touchStartY;
+
+            // Lock direction on first significant movement
+            if (!directionLocked && (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8)) {
+                directionLocked = Math.abs(deltaX) >= Math.abs(deltaY) ? 'horizontal' : 'vertical';
+                if (directionLocked === 'horizontal' && touchStartedInScrollable) {
+                    isDragging = true;
+                    touchStartedInScrollable = false;
+                    const currentCard = cards[currentCardIndex];
+                    currentCard.style.transition = 'none';
+                }
+            }
+
+            if (directionLocked === 'horizontal') e.preventDefault();
+            if (!isDragging || directionLocked !== 'horizontal') return;
 
             touchCurrentX = e.changedTouches[0].screenX;
             const diff = touchStartX - touchCurrentX;
@@ -2413,7 +2642,7 @@
                 nextCard.style.transform = `translateX(${nextTranslate}%) scale(${nextScale})`;
                 nextCard.style.opacity = nextOpacity;
             }
-        }, { passive: true });
+        }, { passive: false });
 
         cardContainer.addEventListener('touchend', (e) => {
             if (!isDragging || touchStartedInScrollable || touchStartedInInk) {
@@ -2520,6 +2749,7 @@
 
             touchStartedInScrollable = false;
             touchStartedInInk = false;
+            directionLocked = null;
         }, { passive: true });
 
         // Enable scrolling on message-chain
@@ -2885,7 +3115,15 @@
                 if (front) {
                     const hint = document.createElement('div');
                     hint.className = 'card-hint';
-                    hint.textContent = 'tap to flip';
+                    if (card.dataset.card === '0') {
+                        hint.textContent = 'tap to see first encounter';
+                        hint.classList.add('card-hint-encounter');
+                    } else if (card.dataset.card === '2') {
+                        hint.textContent = 'tap for messages evidence';
+                        hint.classList.add('card-hint-encounter');
+                    } else {
+                        hint.textContent = 'tap to flip';
+                    }
                     front.appendChild(hint);
                 }
                 const back = card.querySelector('.card-back');
@@ -2912,6 +3150,71 @@
             cards.forEach(card => {
                 flipObserver.observe(card, { attributes: true, attributeFilter: ['class'] });
             });
+        })();
+
+        // US States Map
+        const VISITED_FIPS = new Set(['01','04','06','08','12','18','27','32','48','49']);  // AL, AZ, CA, CO, FL, IN, MN, NV, TX, UT
+
+        let mapRendered = false;
+
+        async function renderStatesMap() {
+            if (mapRendered) return;
+            mapRendered = true;
+
+            const container = document.getElementById('statesMap');
+            const width = 500, height = 310;
+
+            const svg = d3.select(container)
+                .append('svg')
+                .attr('viewBox', `0 0 ${width} ${height}`)
+                .attr('preserveAspectRatio', 'xMidYMid meet');
+
+            try {
+                const us = await d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json');
+                const projection = d3.geoAlbersUsa().scale(650).translate([width / 2, height / 2]);
+                const path = d3.geoPath().projection(projection);
+                const states = topojson.feature(us, us.objects.states);
+
+                svg.selectAll('path')
+                    .data(states.features)
+                    .enter()
+                    .append('path')
+                    .attr('d', path)
+                    .attr('class', d => {
+                        const fips = String(d.id).padStart(2, '0');
+                        return VISITED_FIPS.has(fips) ? 'state visited' : 'state';
+                    });
+            } catch (e) {
+                container.innerHTML = '<p style="color:#888;font-size:0.8rem;text-align:center;padding:12px">Map unavailable offline</p>';
+            }
+        }
+
+        function animateVisitedStates() {
+            const visited = document.querySelectorAll('#statesMap .state.visited');
+            visited.forEach((el, i) => {
+                setTimeout(() => el.classList.add('highlight'), 400 + i * 120);
+            });
+        }
+
+        // Pre-render the map as soon as D3 is ready
+        document.addEventListener('DOMContentLoaded', renderStatesMap);
+
+        // Intro overlay dismiss
+        (function () {
+            const overlay = document.getElementById('introOverlay');
+            if (!overlay) return;
+
+            function dismiss(e) {
+                e.stopPropagation();
+                overlay.classList.add('dismissed');
+                // Block the synthetic click that follows a touch from reaching the card
+                overlay.addEventListener('click', e => e.stopPropagation());
+                overlay.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+                overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+            }
+
+            overlay.addEventListener('click', dismiss, { once: true });
+            overlay.addEventListener('touchstart', dismiss, { once: true, passive: true });
         })();
 
     </script>
