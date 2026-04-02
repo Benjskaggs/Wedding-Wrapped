@@ -220,7 +220,7 @@
         .card-face.full-image .content {
             margin-top: auto;
             position: relative;
-            padding: 20px 24px 4px;
+            padding: 20px 24px 28px;
             z-index: 2;
             order: 998;
         }
@@ -235,7 +235,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            height: 50%;
+            height: 65%;
             background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
             z-index: 1;
             pointer-events: none;
@@ -390,7 +390,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 30px 28px;
+            padding: 30px 28px 72px;
             text-align: center;
         }
 
@@ -634,7 +634,7 @@
                 font-size: 0.95rem;
             }
             .back-content {
-                padding: 24px 20px;
+                padding: 24px 20px 40px;
             }
         }
 
@@ -1519,6 +1519,11 @@
             <div class="card hidden" data-card="4" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front full-image">
+                    <button class="gallery-btn" onclick="event.stopPropagation(); openValentinesGallery();">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                        </svg>
+                    </button>
                     <div class="card-date">February 14, 2024</div>
                     <div class="image-container">
                         <img data-src="assets/LosslessValentines.PNG" alt="Valentine's Day">
@@ -1539,10 +1544,15 @@
 
                 <!-- Back of card -->
                 <div class="card-face card-back">
+                    <button class="gallery-btn" onclick="event.stopPropagation(); openValentinesGallery();">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+                        </svg>
+                    </button>
                     <div class="back-content">
                         <span class="back-event-tag">Official</span>
                         <p class="back-story-text">
-                            Leah had heard from friends that Ben planned to ask her to be his girlfriend on Valentine's Day. She waited patiently, but the evening passed without flowers or a question. Ben was nervous and didn't have his plan perfected yet. Eventually, she asked him how he felt. That is when he asked her to be his girlfriend.
+                            Leah had heard from friends that Ben planned to ask her to be his girlfriend on Valentine's Day. She waited, but the evening passed without flowers or a question. Ben was nervous and didn't have his plan perfected yet, he figured he'd want until the following day. Growing impatient by the end of the night, she asked him "How are you feeling about us?" Invetably, Ben knew where the conversation was headed so he officially asked her to be his girlfriend. The following day, he made sure to bring her flowers and a gift.
                         </p>
                     </div>
                     <div class="flip-hint">
@@ -1646,7 +1656,7 @@
             <div class="card hidden" data-card="7" onclick="this.classList.toggle('flipped')">
                 <!-- Front of card -->
                 <div class="card-face card-front full-image">
-                    <div class="card-date">May 2025</div>
+                    <div class="card-date">May – August 2025</div>
                     <div class="image-container">
                         <img data-src="assets/LongDistance2.png" alt="Long distance">
                     </div>
@@ -1852,6 +1862,25 @@
     <!-- Gallery - Fixed background overlay -->
     <div class="gallery-overlay" id="galleryOverlay"></div>
 
+    <!-- Valentine's Day Gallery - Content (scrolls with body) -->
+    <div class="gallery-content" id="valentinesGallery" style="display: none;">
+        <h2 class="gallery-title">Valentine's Day</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="assets/ValentinesDay/1.JPG" alt="Valentine's Day photo">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/ValentinesDay/2.jpg" alt="Valentine's Day photo">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/ValentinesDay/3.jpg" alt="Valentine's Day photo">
+            </div>
+            <div class="gallery-item">
+                <img src="assets/ValentinesDay/4.JPG" alt="Valentine's Day photo">
+            </div>
+        </div>
+    </div>
+
     <!-- Gallery - Close button (fixed) -->
     <button class="gallery-close" onclick="closeGallery()">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1945,7 +1974,7 @@
                 <div class="stat-subtitle">Since November 13, 2025</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">10</div>
+                <div class="stat-value" data-target="10">0</div>
                 <div class="stat-label">Seasons Together</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; font-size: 0.9rem; color: #555;">
                     <div>3 winters</div>
@@ -1955,12 +1984,12 @@
                 </div>
             </div>
             <div class="stat-card" id="statesStatCard">
-                <div class="stat-value">10</div>
+                <div class="stat-value" data-target="10">0</div>
                 <div class="stat-label">States Visited</div>
                 <div id="statesMap"></div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">6</div>
+                <div class="stat-value" data-target="6">0</div>
                 <div class="stat-label">Concerts Attended</div>
                 <div class="stat-list">
                     <div>Jeremy Zucker & Chelsea Cutler</div>
@@ -1972,7 +2001,7 @@
                 </div>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, #6495ED 0%, #DB7093 50%, #FFB6C1 100%); text-align: center; padding: 32px 24px;">
-                <div style="font-size: 3rem; font-weight: 800; color: #ffffff; line-height: 1; margin-bottom: 8px;">1</div>
+                <div style="font-size: 3rem; font-weight: 800; color: #ffffff; line-height: 1; margin-bottom: 8px;" data-target="1">0</div>
                 <div style="font-family: 'Great Vibes', cursive; font-size: 2rem; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.15);">forever beginning</div>
             </div>
         </div>
@@ -2012,6 +2041,18 @@
             window.scrollTo(0, 0);
 
             // Force a theme-color update for the notch
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+        }
+
+        function openValentinesGallery() {
+            document.getElementById('engagementGallery').style.display = 'none';
+            document.getElementById('californiaGallery').style.display = 'none';
+            document.getElementById('valentinesGallery').style.display = 'block';
+            document.documentElement.classList.add('gallery-active');
+            document.body.classList.add('gallery-open');
+            document.getElementById('bleed-layer').style.display = 'none';
+            document.getElementById('confettiContainer').style.display = 'none';
+            window.scrollTo(0, 0);
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
         }
 
@@ -2063,9 +2104,10 @@
         function closeGallery() {
             window.scrollTo(0, 0);
 
-            // Hide both galleries
+            // Hide all galleries
             document.getElementById('engagementGallery').style.display = 'none';
             document.getElementById('californiaGallery').style.display = 'none';
+            document.getElementById('valentinesGallery').style.display = 'none';
 
             document.documentElement.classList.remove('gallery-active');
             document.body.classList.remove('gallery-open');
@@ -2114,12 +2156,34 @@
             const statCards = document.querySelectorAll('.stat-card');
             statCards.forEach(card => card.classList.remove('visible'));
 
+            // Calculate all date-based stats and store as data-target
+            const today = new Date();
+
+            const daysKnown = Math.floor((today - new Date(DATE_FIRST_MET)) / (1000 * 60 * 60 * 24));
+            const elKnown = document.getElementById('statDaysKnown');
+            elKnown.dataset.target = daysKnown;
+            elKnown.textContent = '0';
+
+            const daysDated = Math.floor((today - new Date(DATE_STARTED_DATING)) / (1000 * 60 * 60 * 24));
+            const elDated = document.getElementById('statDaysDated');
+            elDated.dataset.target = daysDated;
+            elDated.textContent = '0';
+
+            const daysEngaged = Math.floor((today - new Date(DATE_ENGAGED)) / (1000 * 60 * 60 * 24));
+            const elEngaged = document.getElementById('statDaysEngaged');
+            elEngaged.dataset.target = daysEngaged;
+            elEngaged.textContent = '0';
+
             setTimeout(() => {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach((entry, index) => {
                         if (entry.isIntersecting) {
                             setTimeout(() => {
                                 entry.target.classList.add('visible');
+                                const statVal = entry.target.querySelector('[data-target]');
+                                if (statVal) {
+                                    animateCount(statVal, parseInt(statVal.dataset.target), 1400);
+                                }
                                 if (entry.target.id === 'statesStatCard') {
                                     animateVisitedStates();
                                 }
@@ -2130,18 +2194,18 @@
 
                 statCards.forEach(card => observer.observe(card));
             }, 100);
+        }
 
-            // Calculate all date-based stats
-            const today = new Date();
-
-            const daysKnown = Math.floor((today - new Date(DATE_FIRST_MET)) / (1000 * 60 * 60 * 24));
-            document.getElementById('statDaysKnown').textContent = daysKnown.toLocaleString();
-
-            const daysDated = Math.floor((today - new Date(DATE_STARTED_DATING)) / (1000 * 60 * 60 * 24));
-            document.getElementById('statDaysDated').textContent = daysDated.toLocaleString();
-
-            const daysEngaged = Math.floor((today - new Date(DATE_ENGAGED)) / (1000 * 60 * 60 * 24));
-            document.getElementById('statDaysEngaged').textContent = daysEngaged.toLocaleString();
+        function animateCount(el, target, duration) {
+            const startTime = performance.now();
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(target * eased).toLocaleString();
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
         }
 
         function closeWrappedSummary() {
