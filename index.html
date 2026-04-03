@@ -2301,7 +2301,12 @@
             });
         }
 
-        function jumpToCard(targetIndex) {
+        function setHash(index) {
+            const cardNum = cards[index].dataset.card;
+            history.replaceState(null, '', '#card-' + cardNum);
+        }
+
+        function jumpToCard(targetIndex, skipHash) {
             if (targetIndex === currentCardIndex || targetIndex < 0 || targetIndex >= totalCards) {
                 return; // Already on this card or invalid index
             }
@@ -2323,6 +2328,8 @@
             if (currentCardIndex === 0) {
                 triggerRoadTripAnimation();
             }
+
+            if (!skipHash) setHash(currentCardIndex);
         }
 
         function triggerRoadTripAnimation() {
@@ -2339,76 +2346,6 @@
             layers.classList.add('animate');
         }
 
-        // --- Gyroscope parallax for card 0 layers ---
-        const gyroDepths = { 'layer-car': 1, 'layer-ben': 2, 'layer-leah': 2, 'layer-mountains': 3, 'layer-y': 4 };
-        const gyroScale = 6;
-        let gyroActive = false;
-
-        function handleGyro(e) {
-            const card0 = document.querySelector('.card[data-card="0"]');
-            if (!card0 || card0.classList.contains('hidden') || card0.classList.contains('flipped')) return;
-            const layers = document.getElementById('roadTripLayers');
-            if (!layers) return;
-            const tiltX = Math.max(-30, Math.min(30, e.gamma || 0));
-            const tiltY = Math.max(-30, Math.min(30, (e.beta || 45) - 45));
-            layers.querySelectorAll('.layer').forEach(layer => {
-                const depthKey = Array.from(layer.classList).find(c => gyroDepths[c]);
-                const depth = gyroDepths[depthKey] || 1;
-                const x = (tiltX / 30) * depth * gyroScale;
-                const y = (tiltY / 30) * depth * gyroScale;
-                layer.style.transform = `translate(${x}px, ${y}px)`;
-            });
-        }
-
-        function enableGyro() {
-            if (gyroActive) return;
-            if (typeof DeviceOrientationEvent !== 'undefined' &&
-                typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(state => { if (state === 'granted') { window.addEventListener('deviceorientation', handleGyro); gyroActive = true; } })
-                    .catch(() => {});
-            } else {
-                window.addEventListener('deviceorientation', handleGyro);
-                gyroActive = true;
-            }
-        }
-
-        const roadTripLayers = document.getElementById('roadTripLayers');
-        if (roadTripLayers) {
-            roadTripLayers.querySelectorAll('.layer').forEach(layer => {
-                layer.addEventListener('animationend', () => {
-                    layer.style.animation = 'none'; // release fill-mode lock so gyro can move the layer
-                    layer.style.opacity = '1';
-                    layer.style.transition = 'transform 0.12s ease-out';
-                });
-            });
-        }
-
-        // iOS 13+ requires requestPermission from a direct user gesture AND HTTPS.
-        // Show a small button on card 0 if permission hasn't been granted yet.
-        function showGyroBtn() {
-            if (gyroActive) return;
-            const existing = document.getElementById('gyroBtn');
-            if (existing) return;
-            const btn = document.createElement('button');
-            btn.id = 'gyroBtn';
-            btn.textContent = '✦ Enable Motion';
-            btn.style.cssText = 'position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:20px;padding:6px 16px;font-size:0.75rem;font-family:Montserrat,sans-serif;letter-spacing:1px;cursor:pointer;backdrop-filter:blur(8px);';
-            btn.addEventListener('click', () => {
-                enableGyro();
-                btn.remove();
-            });
-            document.querySelector('.card[data-card="0"]').appendChild(btn);
-        }
-
-        if (typeof DeviceOrientationEvent !== 'undefined' &&
-            typeof DeviceOrientationEvent.requestPermission === 'function') {
-            // iOS — needs explicit tap + HTTPS
-            showGyroBtn();
-        } else {
-            // Android / desktop — enable immediately
-            enableGyro();
-        }
 
         function navigateCard(direction) {
             const newIndex = currentCardIndex + direction;
@@ -2472,14 +2409,30 @@
                     }
 
                     preloadAdjacentCards(currentCardIndex);
+                    setHash(currentCardIndex);
                 }, 300);
             }
         }
 
+        function cardIndexFromHash() {
+            const match = location.hash.match(/^#card-(\d+)$/);
+            if (!match) return 0;
+            const cardNum = match[1];
+            const idx = Array.from(cards).findIndex(c => c.dataset.card === cardNum);
+            return idx >= 0 ? idx : 0;
+        }
+
         // Initialize on page load
+        currentCardIndex = cardIndexFromHash();
         updateCard();
         preloadAdjacentCards(currentCardIndex);
         triggerRoadTripAnimation();
+        setHash(currentCardIndex);
+
+        window.addEventListener('hashchange', () => {
+            const idx = cardIndexFromHash();
+            jumpToCard(idx, true);
+        });
 
         // Swipe navigation
         (function() {
@@ -2769,17 +2722,15 @@
             if (!overlay) return;
 
             function dismiss(e) {
+                e.preventDefault();
                 e.stopPropagation();
                 overlay.classList.add('dismissed');
-                // Block the synthetic click that follows a touch from reaching the card
-                overlay.addEventListener('click', e => e.stopPropagation());
-                overlay.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
                 overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
                 setTimeout(() => overlay.remove(), 600);
             }
 
             overlay.addEventListener('click', dismiss, { once: true });
-            overlay.addEventListener('touchstart', dismiss, { once: true, passive: true });
+            overlay.addEventListener('touchstart', dismiss, { once: true });
         })();
 
     </script>
